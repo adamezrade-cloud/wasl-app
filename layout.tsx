@@ -13,9 +13,14 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <head>
-        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+        />
       </head>
-      <body>{children}</body>
+      <body style={{ backgroundColor: '#020617', color: '#f8fafc', margin: 0, padding: 0 }}>
+        {children}
+      </body>
     </html>
   );
 }
