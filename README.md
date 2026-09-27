@@ -1,4 +1,4 @@
-# WASL · وصل — Global Digital Platform
+# WASL · WASL — Global Digital Platform
 
 منصة وساطة عالمية مبنية على **Next.js 16 (App Router) + TypeScript + PostgreSQL (Drizzle ORM)** بهندسة **Clean Architecture**.
 
