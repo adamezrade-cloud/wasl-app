@@ -1,66 +1,73 @@
-import { inspectIp, getDemoThreatIps } from "@/infrastructure/ip-inspector";
-import { ok, fail, getClientIp, getUserAgent, fromResult } from "@/lib/api";
+import {
+  listSuccessStories,
+  getReviewsStats,
+  createReview,
+  seedSuccessStoriesIfEmpty,
+} from "@/services/reviews.service";
+import { ok, fail } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    if (searchParams.get("view") === "demo-threats") {
-      return ok({
-        ips: getDemoThreatIps(),
-        note: "عناوين تجريبية تُرفض مباشرة في الوضع offline/heuristic",
-      });
+    const view = searchParams.get("view");
+
+    if (view === "stats") {
+      return ok(await getReviewsStats());
     }
 
-    const ip = searchParams.get("ip") || getClientIp(request);
-    const enforce = searchParams.get("enforce") !== "0";
-    const offline =
-      searchParams.get("offline") === "1" ||
-      process.env.IP_INSPECTOR_OFFLINE === "1" ||
-      Boolean(searchParams.get("ip"));
+    const rows = await listSuccessStories({
+      sector: searchParams.get("sector") ?? undefined,
+      minRating: searchParams.get("minRating")
+        ? Number(searchParams.get("minRating"))
+        : 4,
+      featuredOnly: searchParams.get("featured") === "1",
+      limit: Number(searchParams.get("limit") ?? 24),
+    });
 
-    const result = await inspectIp(
-      ip,
-      {
-        enforceBlock: enforce,
-        offlineOnly: offline,
-        context: "manual",
-        userAgent: getUserAgent(request),
-        userId: searchParams.get("userId") ?? undefined,
-      },
-      request.headers
-    );
-
-    if (!result.ok) return fromResult(result);
-    return ok(result.value);
+    return ok(rows, { total: rows.length });
   } catch (e) {
-    return fail(e instanceof Error ? e.message : "فشل فحص IP", 500);
+    return fail(e instanceof Error ? e.message : "خطأ في جلب التقييمات", 500);
   }
 }
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const ip = body.ip || getClientIp(request);
-    const result = await inspectIp(
-      ip,
-      {
-        enforceBlock: body.enforceBlock !== false,
-        offlineOnly:
-          body.offlineOnly === true ||
-          process.env.IP_INSPECTOR_OFFLINE === "1" ||
-          Boolean(body.ip),
-        context: body.context ?? "manual",
-        userId: body.userId,
-        userAgent: getUserAgent(request),
-      },
-      request.headers
-    );
 
-    if (!result.ok) return fromResult(result);
-    return ok(result.value, undefined, "IP نظيف");
+    if (body.action === "seed") {
+      const result = await seedSuccessStoriesIfEmpty();
+      return ok(result, undefined, result.message);
+    }
+
+    const required = ["orderId", "reviewerId", "revieweeId", "rating"];
+    for (const k of required) {
+      if (body[k] === undefined || body[k] === null || body[k] === "") {
+        return fail(`الحقل المطلوب مفقود: ${k}`);
+      }
+    }
+
+    const row = await createReview({
+      orderId: body.orderId,
+      reviewerId: body.reviewerId,
+      revieweeId: body.revieweeId,
+      rating: Number(body.rating),
+      title: body.title,
+      comment: body.comment,
+      sector: body.sector,
+      countryCode: body.countryCode,
+      isVerified: body.isVerified,
+      isFeatured: body.isFeatured,
+      isSuccessStory: body.isSuccessStory,
+    });
+
+    return ok(row, undefined, "تم حفظ التقييم الموثّق");
   } catch (e) {
-    return fail(e instanceof Error ? e.message : "فشل فحص IP", 500);
+    const msg = e instanceof Error ? e.message : "فشل حفظ التقييم";
+    if (msg.includes("unique") || msg.includes("duplicate")) {
+      return fail("تم تقييم هذا الطلب مسبقًا من نفس المستخدم", 409);
+    }
+    return fail(msg, 400);
   }
 }
