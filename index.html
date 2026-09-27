@@ -1,0 +1,3762 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WASL | وصل — Global Digital Platform</title>
+  <meta name="description" content="منصة وصل للوساطة العالمية — إدارة الطلبات والضمان المالي Escrow" />
+  <link rel="icon" href="/images/wasl-mark.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy-deep: #020b1c;
+      --navy: #0a1628;
+      --navy-mid: #0d1b2a;
+      --navy-card: #111f33;
+      --navy-border: rgba(148, 163, 184, 0.14);
+      --cyan: #22d3ee;
+      --cyan-dim: rgba(34, 211, 238, 0.15);
+      --amber: #fb923c;
+      --amber-dim: rgba(251, 146, 60, 0.15);
+      --text: #e8eef7;
+      --muted: #94a3b8;
+      --success: #34d399;
+      --warn: #fbbf24;
+      --danger: #f87171;
+      --info: #60a5fa;
+      --radius: 16px;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      --font: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: radial-gradient(1200px 600px at 10% -10%, rgba(34,211,238,.08), transparent 50%),
+                  radial-gradient(900px 500px at 100% 0%, rgba(251,146,60,.07), transparent 45%),
+                  linear-gradient(165deg, var(--navy-deep), var(--navy) 45%, var(--navy-mid));
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.7;
+    }
+
+    button, input, select, textarea { font: inherit; color: inherit; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: linear-gradient(180deg, rgba(2,11,28,.98), rgba(10,22,40,.96));
+      border-left: 1px solid var(--navy-border);
+      padding: 1.25rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: .85rem;
+      padding: .35rem .15rem 1rem;
+      border-bottom: 1px solid var(--navy-border);
+    }
+    .brand-mark {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 0 28px rgba(34,211,238,.25);
+      border: 1px solid rgba(34,211,238,.25);
+      background: #020b1c;
+      flex-shrink: 0;
+    }
+    .brand-mark img { width: 100%; height: 100%; object-fit: cover; }
+    .brand h1 {
+      font-size: 1.15rem;
+      letter-spacing: .16em;
+      font-weight: 800;
+    }
+    .brand p {
+      font-size: .68rem;
+      color: var(--muted);
+      letter-spacing: .04em;
+    }
+    .nav { display: flex; flex-direction: column; gap: .35rem; }
+    .nav button {
+      display: flex; align-items: center; gap: .65rem;
+      width: 100%; text-align: right;
+      background: transparent; border: 1px solid transparent;
+      color: var(--muted); border-radius: 12px;
+      padding: .72rem .85rem; cursor: pointer;
+      transition: .2s ease;
+    }
+    .nav button:hover { background: rgba(255,255,255,.04); color: var(--text); }
+    .nav button.active {
+      background: linear-gradient(90deg, var(--cyan-dim), var(--amber-dim));
+      border-color: rgba(34,211,238,.28);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+    }
+    .nav .ico { width: 1.25rem; text-align: center; }
+
+    .side-card {
+      margin-top: auto;
+      border: 1px solid var(--navy-border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #020b1c;
+    }
+    .side-card img { aspect-ratio: 1; object-fit: cover; width: 100%; }
+    .side-card .cap {
+      padding: .75rem;
+      text-align: center;
+      border-top: 1px solid var(--navy-border);
+    }
+    .side-card .cap strong {
+      display: block;
+      letter-spacing: .18em;
+      font-size: .85rem;
+    }
+    .side-card .cap span {
+      display: block;
+      margin-top: .25rem;
+      font-size: .62rem;
+      letter-spacing: .18em;
+      color: var(--muted);
+    }
+    .side-card .cap em {
+      display: block;
+      margin-top: .4rem;
+      font-style: normal;
+      font-size: .65rem;
+      color: var(--cyan);
+    }
+
+    /* Main */
+    .main { min-width: 0; display: flex; flex-direction: column; }
+    .topbar {
+      position: sticky; top: 0; z-index: 30;
+      backdrop-filter: blur(14px);
+      background: rgba(10, 22, 40, .72);
+      border-bottom: 1px solid var(--navy-border);
+      padding: .85rem 1.4rem;
+      display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    }
+    .topbar .eyebrow {
+      font-size: .65rem;
+      letter-spacing: .22em;
+      color: var(--cyan);
+      font-weight: 600;
+    }
+    .topbar h2 { font-size: .95rem; font-weight: 600; }
+    .chips { display: flex; gap: .45rem; flex-wrap: wrap; }
+    .chip {
+      font-size: .72rem; font-weight: 600;
+      padding: .28rem .7rem; border-radius: 999px;
+      border: 1px solid transparent;
+    }
+    .chip.cyan { background: var(--cyan-dim); color: #a5f3fc; border-color: rgba(34,211,238,.25); }
+    .chip.amber { background: var(--amber-dim); color: #fdba74; border-color: rgba(251,146,60,.25); }
+    .chip.ok { background: rgba(52,211,153,.12); color: #6ee7b7; }
+
+    .content { padding: 1.35rem 1.4rem 2.5rem; max-width: 1280px; width: 100%; margin: 0 auto; }
+    .section { display: none; animation: fade .28s ease; }
+    .section.active { display: block; }
+    @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    .page-head {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+    }
+    .page-head h3 { font-size: 1.55rem; font-weight: 800; }
+    .page-head p { color: var(--muted); font-size: .9rem; margin-top: .2rem; }
+
+    .grid { display: grid; gap: 1rem; }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .grid-orders { grid-template-columns: 360px 1fr; }
+
+    .card {
+      background: linear-gradient(180deg, rgba(17,31,51,.92), rgba(13,27,42,.88));
+      border: 1px solid var(--navy-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.1rem;
+    }
+    .card h4 { font-size: 1.05rem; margin-bottom: .75rem; }
+    .card.flat { box-shadow: none; }
+
+    .stat {
+      padding: 1rem 1.1rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--navy-border);
+      background: linear-gradient(135deg, rgba(17,31,51,.95), rgba(10,22,40,.9));
+      position: relative;
+      overflow: hidden;
+    }
+    .stat::after {
+      content: "";
+      position: absolute; inset: auto -20% -40% auto;
+      width: 120px; height: 120px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(34,211,238,.18), transparent 70%);
+    }
+    .stat.amber::after { background: radial-gradient(circle, rgba(251,146,60,.18), transparent 70%); }
+    .stat.ok::after { background: radial-gradient(circle, rgba(52,211,153,.16), transparent 70%); }
+    .stat.warn::after { background: radial-gradient(circle, rgba(251,191,36,.16), transparent 70%); }
+    .stat .label { font-size: .78rem; color: var(--muted); }
+    .stat .value { font-size: 1.55rem; font-weight: 800; margin-top: .25rem; letter-spacing: .02em; }
+    .stat .hint { font-size: .72rem; color: var(--muted); margin-top: .2rem; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+      border: none; border-radius: 12px; padding: .65rem 1rem;
+      font-weight: 700; font-size: .86rem; cursor: pointer;
+      transition: .18s ease; white-space: nowrap;
+    }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .btn-primary {
+      background: linear-gradient(135deg, #0891b2, #22d3ee 55%, #67e8f9);
+      color: #042f2e;
+      box-shadow: 0 8px 24px rgba(34,211,238,.25);
+    }
+    .btn-primary:hover:not(:disabled) { filter: brightness(1.05); transform: translateY(-1px); }
+    .btn-amber {
+      background: linear-gradient(135deg, #c2410c, #fb923c);
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(251,146,60,.22);
+    }
+    .btn-ghost {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--navy-border);
+      color: var(--text);
+    }
+    .btn-ghost:hover:not(:disabled) { background: rgba(255,255,255,.08); }
+    .btn-danger {
+      background: rgba(248,113,113,.12);
+      border: 1px solid rgba(248,113,113,.3);
+      color: #fecaca;
+    }
+    .btn-success {
+      background: rgba(52,211,153,.14);
+      border: 1px solid rgba(52,211,153,.3);
+      color: #a7f3d0;
+    }
+    .btn-sm { padding: .4rem .7rem; font-size: .75rem; border-radius: 10px; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: .45rem; }
+
+    .field { margin-bottom: .85rem; }
+    .field label {
+      display: block; font-size: .8rem; font-weight: 600;
+      color: #cbd5e1; margin-bottom: .35rem;
+    }
+    .field input, .field select, .field textarea {
+      width: 100%;
+      background: rgba(2,11,28,.55);
+      border: 1px solid var(--navy-border);
+      border-radius: 12px;
+      padding: .7rem .85rem;
+      outline: none;
+      transition: .15s ease;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: rgba(34,211,238,.55);
+      box-shadow: 0 0 0 3px rgba(34,211,238,.12);
+    }
+    .field textarea { min-height: 88px; resize: vertical; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+
+    .badge {
+      display: inline-flex; align-items: center;
+      border-radius: 999px; padding: .18rem .6rem;
+      font-size: .7rem; font-weight: 700;
+    }
+    .badge-negotiating { background: rgba(251,191,36,.15); color: #fde68a; }
+    .badge-escrow { background: rgba(34,211,238,.15); color: #a5f3fc; }
+    .badge-completed { background: rgba(52,211,153,.15); color: #a7f3d0; }
+    .badge-cancelled { background: rgba(248,113,113,.15); color: #fecaca; }
+    .badge-neutral { background: rgba(148,163,184,.15); color: #cbd5e1; }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 720px; }
+    th {
+      text-align: right; font-size: .75rem; color: var(--muted);
+      font-weight: 600; padding: .65rem .5rem;
+      border-bottom: 1px solid var(--navy-border);
+    }
+    td {
+      padding: .85rem .5rem; border-bottom: 1px solid rgba(148,163,184,.08);
+      vertical-align: top; font-size: .86rem;
+    }
+    tr:hover td { background: rgba(255,255,255,.02); }
+
+    .order-item {
+      border: 1px solid var(--navy-border);
+      border-radius: 14px;
+      padding: 1rem;
+      margin-bottom: .85rem;
+      background: rgba(2,11,28,.35);
+      transition: .2s ease;
+    }
+    .order-item:hover { border-color: rgba(34,211,238,.28); }
+    .order-top {
+      display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    }
+    .order-meta {
+      display: flex; flex-wrap: wrap; gap: .55rem .9rem;
+      margin-top: .55rem; color: var(--muted); font-size: .78rem;
+    }
+    .order-amount {
+      text-align: left;
+      min-width: 130px;
+    }
+    .order-amount .money {
+      font-size: 1.25rem; font-weight: 800;
+      background: linear-gradient(90deg, #67e8f9, #fdba74);
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent;
+    }
+    .order-amount .sub { font-size: .72rem; color: var(--muted); }
+    .order-actions {
+      margin-top: .85rem; padding-top: .85rem;
+      border-top: 1px dashed rgba(148,163,184,.15);
+      display: flex; flex-wrap: wrap; gap: .45rem; align-items: center;
+    }
+
+    .toast-wrap {
+      position: fixed; left: 1rem; bottom: 1rem; z-index: 80;
+      display: flex; flex-direction: column; gap: .5rem; max-width: min(420px, calc(100vw - 2rem));
+    }
+    .toast {
+      background: rgba(17,31,51,.96);
+      border: 1px solid rgba(34,211,238,.35);
+      border-radius: 14px;
+      padding: .85rem 1rem;
+      box-shadow: var(--shadow);
+      animation: slide .25s ease;
+    }
+    .toast.wa { border-color: rgba(52,211,153,.4); }
+    .toast.err { border-color: rgba(248,113,113,.4); }
+    .toast strong { display: block; margin-bottom: .2rem; font-size: .85rem; }
+    .toast p { font-size: .78rem; color: var(--muted); white-space: pre-wrap; }
+    @keyframes slide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; none; } }
+
+    .hero {
+      position: relative; overflow: hidden;
+      border-radius: 24px;
+      border: 1px solid var(--navy-border);
+      background: linear-gradient(135deg, #020b1c, #0a1628 40%, #12233a);
+      padding: 1.75rem;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 1.5rem;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+    .hero::before, .hero::after {
+      content: ""; position: absolute; border-radius: 50%; filter: blur(40px);
+    }
+    .hero::before {
+      width: 220px; height: 220px; top: -60px; right: -40px;
+      background: rgba(34,211,238,.18);
+    }
+    .hero::after {
+      width: 240px; height: 240px; bottom: -80px; left: -30px;
+      background: rgba(251,146,60,.14);
+    }
+    .hero > * { position: relative; z-index: 1; }
+    .hero .tag {
+      display: inline-flex; align-items: center; gap: .5rem;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.04);
+      border-radius: 999px; padding: .3rem .75rem;
+      font-size: .7rem; letter-spacing: .14em; color: #cbd5e1;
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; }
+    .dot.cyan { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+    .dot.amber { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+    .hero h3 {
+      margin-top: .9rem; font-size: clamp(1.6rem, 3vw, 2.3rem); font-weight: 900; line-height: 1.25;
+    }
+    .hero h3 span {
+      display: block;
+      background: linear-gradient(90deg, #67e8f9, #fff, #fdba74);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .hero p { margin-top: .75rem; color: #94a3b8; max-width: 36rem; }
+    .hero-logo {
+      border-radius: 20px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 0 40px rgba(34,211,238,.12), 0 0 50px rgba(251,146,60,.08);
+      background: #020b1c;
+    }
+    .hero-logo img { width: 100%; aspect-ratio: 4/5; object-fit: cover; }
+
+    .empty {
+      text-align: center; padding: 2.5rem 1rem;
+      border: 1px dashed rgba(148,163,184,.25);
+      border-radius: 16px; color: var(--muted);
+    }
+
+    .wa-log {
+      max-height: 320px; overflow: auto;
+      display: flex; flex-direction: column; gap: .65rem;
+    }
+    .wa-item {
+      border: 1px solid var(--navy-border);
+      border-radius: 12px;
+      padding: .75rem .85rem;
+      background: rgba(2,11,28,.4);
+    }
+    .wa-item pre {
+      white-space: pre-wrap;
+      font-family: inherit;
+      font-size: .75rem;
+      color: #cbd5e1;
+      margin-top: .45rem;
+      line-height: 1.65;
+    }
+
+    .timeline {
+      display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .55rem;
+    }
+    .step {
+      font-size: .68rem; padding: .2rem .5rem; border-radius: 8px;
+      background: rgba(255,255,255,.04); color: var(--muted);
+      border: 1px solid transparent;
+    }
+    .step.on {
+      color: #a5f3fc;
+      border-color: rgba(34,211,238,.3);
+      background: var(--cyan-dim);
+    }
+    .step.done {
+      color: #a7f3d0;
+      border-color: rgba(52,211,153,.3);
+      background: rgba(52,211,153,.12);
+    }
+
+    .modal-back {
+      position: fixed; inset: 0; z-index: 60;
+      background: rgba(2,11,28,.72);
+      display: none; align-items: center; justify-content: center;
+      padding: 1rem;
+    }
+    .modal-back.open { display: flex; }
+    .modal {
+      width: min(520px, 100%);
+      background: var(--navy-card);
+      border: 1px solid var(--navy-border);
+      border-radius: 18px;
+      padding: 1.2rem;
+      box-shadow: var(--shadow);
+    }
+    .modal h4 { margin-bottom: .35rem; }
+    .modal p { color: var(--muted); font-size: .85rem; margin-bottom: 1rem; }
+
+    .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: .85rem; margin-top: 1rem; }
+    .pillar { border-radius: 14px; overflow: hidden; border: 1px solid var(--navy-border); }
+    .swatch { height: 56px; }
+    .swatch.navy { background: linear-gradient(90deg, #020b1c, #0d1b2a); }
+    .swatch.cyan { background: linear-gradient(90deg, #0891b2, #22d3ee); }
+    .swatch.amber { background: linear-gradient(90deg, #c2410c, #fb923c); }
+    .pillar .body { padding: .85rem; background: rgba(17,31,51,.7); }
+    .pillar .body strong { display: block; margin-bottom: .25rem; }
+    .pillar .body span { font-size: .8rem; color: var(--muted); }
+
+    .list-clean { list-style: none; display: grid; gap: .55rem; }
+    .list-clean li {
+      padding: .7rem .85rem;
+      border-radius: 12px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--navy-border);
+      font-size: .86rem;
+    }
+
+    .assistant-box {
+      display: grid; grid-template-rows: 1fr auto;
+      min-height: 420px;
+    }
+    .chat {
+      overflow-y: auto; max-height: 360px;
+      display: flex; flex-direction: column; gap: .7rem;
+      padding: .25rem;
+      margin-bottom: .85rem;
+    }
+    .bubble {
+      max-width: 90%;
+      padding: .75rem .9rem;
+      border-radius: 14px;
+      font-size: .88rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+    .bubble.bot {
+      align-self: flex-start;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--navy-border);
+    }
+    .bubble.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, rgba(8,145,178,.45), rgba(34,211,238,.25));
+      border: 1px solid rgba(34,211,238,.3);
+    }
+
+    .footer-note {
+      margin-top: 1.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: .75rem;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      70% { transform: scale(1.8); opacity: 0; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+    .chart-svg { width: 100%; height: 200px; display: block; }
+    .bar-row { display: flex; align-items: flex-end; gap: 4px; height: 170px; padding: 0 2px; }
+    .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+    .bar-stack { width: 100%; max-width: 16px; border-radius: 6px 6px 2px 2px; overflow: hidden; background: rgba(255,255,255,.06); position: relative; }
+    .bar-vpn { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(180deg,#67e8f9,#0891b2); }
+    .bar-mod { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(180deg,#fdba74,#c2410c); opacity: .9; }
+    .bar-lbl { font-size: 9px; color: var(--muted); }
+
+    #portalTabs .portal-tab {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(148,163,184,.18);
+      color: var(--text);
+      gap: .65rem;
+    }
+    #portalTabs .portal-tab.active {
+      background: linear-gradient(90deg, rgba(34,211,238,.16), rgba(251,146,60,.12));
+      border-color: rgba(34,211,238,.35);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+    }
+    #portalTabs .portal-tab[data-portal="provider"].active {
+      border-color: rgba(251,146,60,.45);
+    }
+    #portalTabs .portal-tab[data-portal="security"].active {
+      border-color: rgba(248,113,113,.4);
+      background: linear-gradient(90deg, rgba(248,113,113,.14), rgba(100,116,139,.1));
+    }
+
+    .review-filter {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(148,163,184,.2);
+      color: var(--muted);
+    }
+    .review-filter.active {
+      background: linear-gradient(90deg, #22d3ee, #fb923c);
+      color: #020b1c;
+      border-color: transparent;
+      font-weight: 800;
+    }
+    .story-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--navy-border);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(17,31,51,.95), rgba(10,22,40,.92));
+      padding: 1rem;
+      box-shadow: var(--shadow);
+    }
+    .story-card::before {
+      content: "";
+      position: absolute; inset: 0 auto auto 0;
+      height: 3px; width: 100%;
+      background: linear-gradient(90deg, #22d3ee, #fff, #fb923c);
+    }
+    .story-stars { color: #fbbf24; letter-spacing: 1px; font-size: .95rem; }
+
+    @media (max-width: 1100px) {
+      .grid-4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .grid-orders { grid-template-columns: 1fr; }
+      .hero { grid-template-columns: 1fr; }
+      .pillars { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 860px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar {
+        position: relative; height: auto;
+        border-left: none; border-bottom: 1px solid var(--navy-border);
+      }
+      .nav { flex-direction: row; overflow-x: auto; padding-bottom: .25rem; }
+      .nav button { white-space: nowrap; }
+      .side-card { display: none; }
+      .grid-2, .grid-3, .field-row { grid-template-columns: 1fr; }
+      .content { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">
+          <img src="/images/wasl-mark.png" alt="WASL mark" onerror="this.src='/images/wasl-mark.svg'" />
+        </div>
+        <div>
+          <h1>WASL</h1>
+          <p>وصل · منصة الوساطة العالمية</p>
+        </div>
+      </div>
+
+      <nav class="nav" id="mainNav">
+        <button type="button" class="active" data-section="home"><span class="ico">🏠</span> الرئيسية</button>
+        <button type="button" data-section="dashboard"><span class="ico">📊</span> لوحة التحكم</button>
+        <button type="button" data-section="revenue"><span class="ico">📈</span> الإيرادات العالمية</button>
+        <button type="button" data-section="settings"><span class="ico">⚙️</span> إعدادات المنصة</button>
+        <button type="button" data-section="invoices"><span class="ico">🧾</span> الفواتير الرقمية</button>
+        <button type="button" data-section="orders"><span class="ico">📦</span> الطلبات والضمان</button>
+        <button type="button" data-section="disputes"><span class="ico">⚖️</span> النزاعات والتحكيم</button>
+        <button type="button" data-section="providers"><span class="ico">🛠️</span> مقدمو الخدمات</button>
+        <button type="button" data-section="security"><span class="ico">🛡️</span> الأمن</button>
+        <button type="button" data-section="assistant"><span class="ico">🤖</span> المساعد الذكي</button>
+        <button type="button" data-section="whatsapp"><span class="ico">💬</span> مركز واتساب</button>
+        <button type="button" data-section="brand"><span class="ico">✨</span> الهوية البصرية</button>
+      </nav>
+
+      <div class="side-card">
+        <img src="/images/wasl-mark.png" alt="WASL network" onerror="this.src='/images/wasl-mark.svg'" />
+        <div class="cap">
+          <strong>WASL</strong>
+          <span>GLOBAL DIGITAL PLATFORM</span>
+          <em>CYAN ↔ AMBER · TRUST</em>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">WASL · GLOBAL DIGITAL PLATFORM</div>
+          <h2 id="topTitle">ربط العملاء بمقدمي الخدمات حول العالم</h2>
+        </div>
+        <div class="chips">
+          <span class="chip cyan">Midnight Navy</span>
+          <span class="chip amber">Escrow Secure</span>
+          <span class="chip ok">RTL · العربية</span>
+        </div>
+      </header>
+
+      <div class="content">
+        <!-- HOME -->
+        <section id="sec-home" class="section active">
+          <div class="hero">
+            <div>
+              <div class="tag">
+                <span class="dot cyan"></span>
+                WASL
+                <span style="opacity:.4">·</span>
+                GLOBAL DIGITAL PLATFORM
+                <span class="dot amber"></span>
+              </div>
+              <h3>
+                وصل — جسر الثقة بين
+                <span>العملاء ومقدمي الخدمات</span>
+              </h3>
+              <p>
+                منصة وساطة عالمية بهوية تقنية فاخرة: شبكة رقمية تربط طرفين بأمان،
+                مع ضمان Escrow، كشف VPN، تصفية محتوى، ومساعد ذكي — وإشعارات واتساب للمنسق عند التراضي.
+              </p>
+              <div class="btn-row" style="margin-top:1.1rem">
+                <button class="btn btn-primary" data-go="orders">إدارة الطلبات والضمان</button>
+                <button class="btn btn-ghost" data-go="dashboard">لوحة التحكم</button>
+                <button class="btn btn-amber" data-go="assistant">المساعد الذكي</button>
+              </div>
+            </div>
+            <div class="hero-logo">
+              <img src="/images/wasl-logo.png" alt="WASL logo" onerror="this.src='/images/wasl-mark.png'" />
+            </div>
+          </div>
+
+          <div class="pillars">
+            <div class="pillar">
+              <div class="swatch navy"></div>
+              <div class="body">
+                <strong>Midnight Navy</strong>
+                <span>خلفية داكنة فاخرة بطابع تقني واحترافي عالمي.</span>
+              </div>
+            </div>
+            <div class="pillar">
+              <div class="swatch cyan"></div>
+              <div class="body">
+                <strong>Cyan Node</strong>
+                <span>إشعاع سماوي يرمز للعميل والثقة الرقمية.</span>
+              </div>
+            </div>
+            <div class="pillar">
+              <div class="swatch amber"></div>
+              <div class="body">
+                <strong>Amber Node</strong>
+                <span>دفء برتقالي يرمز لمقدم الخدمة واكتمال الوساطة.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-4" style="margin-top:1.1rem" id="homeStats"></div>
+
+          <!-- Sectors strip -->
+          <div style="margin-top:1.4rem">
+            <div class="page-head" style="margin-bottom:.75rem">
+              <div>
+                <h3 style="font-size:1.25rem">القطاعات المدعومة</h3>
+                <p>تغطية عالمية لمختلف المهن والحرف</p>
+              </div>
+            </div>
+            <div class="grid grid-4" id="homeSectors">
+              <div class="card flat" style="text-align:center"><strong>تقنية</strong><div style="font-size:.72rem;color:var(--muted)">IT & Technology</div></div>
+              <div class="card flat" style="text-align:center"><strong>تصميم</strong><div style="font-size:.72rem;color:var(--muted)">Design</div></div>
+              <div class="card flat" style="text-align:center"><strong>حرفي / منزلي</strong><div style="font-size:.72rem;color:var(--muted)">Crafts</div></div>
+              <div class="card flat" style="text-align:center"><strong>قانون / أعمال</strong><div style="font-size:.72rem;color:var(--muted)">Legal & Business</div></div>
+            </div>
+          </div>
+
+          <!-- Verified Reviews & Success Stories (between sectors and brand/infra) -->
+          <div style="margin-top:1.5rem" id="successStoriesBlock">
+            <div class="card" style="background:linear-gradient(165deg,#020b1c,#0a1628 50%,#122033);border-color:rgba(34,211,238,.2)">
+              <div style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:flex-end">
+                <div>
+                  <div class="tag" style="margin-bottom:.5rem">
+                    <span class="dot cyan"></span> VERIFIED REVIEWS
+                    <span style="opacity:.4">·</span> SUCCESS STORIES
+                    <span class="dot amber"></span>
+                  </div>
+                  <h3 style="font-size:1.35rem;margin:0">تقييمات موثّقة وقصص نجاح حية</h3>
+                  <p style="margin-top:.35rem">شهادات عملاء بعد إكمال الصفقات عبر ضمان WASL — فلترة حسب القطاع</p>
+                </div>
+                <div class="chips" id="reviewStatsChips">
+                  <span class="chip cyan">متوسط —</span>
+                  <span class="chip amber">موثّق —</span>
+                </div>
+              </div>
+              <div class="btn-row" style="margin-top:1rem" id="reviewFilters">
+                <button type="button" class="btn btn-sm review-filter active" data-sector="all">الكل</button>
+                <button type="button" class="btn btn-sm review-filter" data-sector="tech">تقني</button>
+                <button type="button" class="btn btn-sm review-filter" data-sector="design">تصميم</button>
+                <button type="button" class="btn btn-sm review-filter" data-sector="home">حرفي</button>
+                <button type="button" class="btn btn-sm review-filter" data-sector="legal">قانوني</button>
+                <button type="button" class="btn btn-sm review-filter" data-sector="marketing">تسويق</button>
+              </div>
+            </div>
+            <div class="grid grid-3" style="margin-top:1rem" id="successStoriesGrid"></div>
+          </div>
+        </section>
+
+        <!-- DASHBOARD -->
+        <section id="sec-dashboard" class="section">
+          <div class="page-head">
+            <div>
+              <h3>لوحة التحكم التشغيلية · Live Ops</h3>
+              <p>Portal Switcher · Escrow Volume · VPN/Moderation · Audit Logs</p>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" data-go="orders">+ طلب جديد</button>
+              <button class="btn btn-ghost" id="btnToggleLive">⏸ إيقاف البث الحي</button>
+              <button class="btn btn-ghost" id="btnRefreshLive">تحديث الآن</button>
+              <button class="btn btn-ghost" id="btnResetDemo">إعادة البيانات التجريبية</button>
+            </div>
+          </div>
+
+          <!-- Live Portal Switcher -->
+          <div class="card" id="portalSwitcher" style="margin-bottom:1rem;background:linear-gradient(165deg,#020b1c,#0a1628 55%,#1a1230);border-color:rgba(34,211,238,.2)">
+            <div style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:flex-start;margin-bottom:1rem">
+              <div>
+                <div style="font-size:.65rem;letter-spacing:.2em;color:#67e8f9;font-weight:700">LIVE PORTAL SWITCHER</div>
+                <h4 style="margin:.25rem 0 0">تبديل الأبواب الحية · Client / Provider / Security</h4>
+                <p style="color:var(--muted);font-size:.8rem;margin-top:.25rem">بدّل الرؤية فورًا وحاكِ طلبًا أو ملف مقدم — ينعكس على العدادات والرسوم</p>
+              </div>
+              <span class="badge badge-escrow" id="portalBadge">Client Portal</span>
+            </div>
+            <div class="grid grid-3" style="margin-bottom:1rem" id="portalTabs">
+              <button type="button" class="btn portal-tab active" data-portal="client" style="justify-content:flex-start;text-align:right;padding:1rem">
+                <span>👤</span><span><strong style="display:block">رؤية العميل</strong><small style="opacity:.7">طلبات + Escrow</small></span>
+              </button>
+              <button type="button" class="btn portal-tab" data-portal="provider" style="justify-content:flex-start;text-align:right;padding:1rem">
+                <span>🛠️</span><span><strong style="display:block">رؤية المقدم</strong><small style="opacity:.7">ملف + معرض</small></span>
+              </button>
+              <button type="button" class="btn portal-tab" data-portal="security" style="justify-content:flex-start;text-align:right;padding:1rem">
+                <span>🛡️</span><span><strong style="display:block">المشرف الأمني</strong><small style="opacity:.7">VPN + محتوى</small></span>
+              </button>
+            </div>
+            <div class="grid grid-2">
+              <div>
+                <div id="portalPanelClient">
+                  <h4 style="color:#67e8f9">محاكاة العميل</h4>
+                  <div class="field"><label>عنوان الطلب</label><input id="simOrderTitle" placeholder="طلب محاكاة بوابة العميل" /></div>
+                  <div class="field-row">
+                    <div class="field"><label>المبلغ USD</label><input id="simOrderAmount" type="number" min="1" value="850" /></div>
+                    <div class="field"><label>مقدم الخدمة</label><select id="simOrderProvider"></select></div>
+                  </div>
+                  <label style="display:flex;gap:.5rem;align-items:center;font-size:.85rem;margin-bottom:.8rem">
+                    <input type="checkbox" id="simFundEscrow" checked /> تجميد في Escrow فورًا
+                  </label>
+                  <button class="btn btn-primary" id="btnSimClient">تنفيذ محاكاة العميل · Live</button>
+                </div>
+                <div id="portalPanelProvider" style="display:none">
+                  <h4 style="color:#fdba74">محاكاة مقدم الخدمة</h4>
+                  <div class="field"><label>المقدم</label><select id="simProviderSelect"></select></div>
+                  <div class="field"><label>العنوان المهني</label><input id="simHeadline" /></div>
+                  <div class="field"><label>المهارات</label><input id="simSkills" placeholder="نجارة, React, Figma" /></div>
+                  <div class="field-row">
+                    <div class="field"><label>القطاع</label>
+                      <select id="simSector">
+                        <option>تقنية</option><option>تصميم</option><option>حرفي</option><option>قانون</option><option>منزلية</option>
+                      </select>
+                    </div>
+                    <div class="field"><label>التوفر</label>
+                      <select id="simAvailability">
+                        <option value="available">متاح</option>
+                        <option value="busy">مشغول</option>
+                        <option value="away">بعيد</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="field"><label>أجر/ساعة</label><input id="simRate" type="number" value="45" /></div>
+                  <button class="btn btn-amber" id="btnSimProvider">حفظ ملف المقدم + معرض · Live</button>
+                </div>
+                <div id="portalPanelSecurity" style="display:none">
+                  <h4 style="color:#fda4af">محاكاة المشرف الأمني</h4>
+                  <div class="field"><label>IP</label><input id="simIp" value="203.0.113.99" class="mono" style="font-family:monospace" /></div>
+                  <div class="btn-row" style="margin-bottom:.7rem">
+                    <button class="btn btn-primary" id="btnSimVpn">حظر VPN</button>
+                    <button class="btn btn-ghost" id="btnSimCleanIp">IP نظيف 8.8.8.8</button>
+                  </div>
+                  <div class="field"><label>نص إشراف</label><textarea id="simModText">تحويل خارجي تجريبي</textarea></div>
+                  <button class="btn btn-ghost" id="btnSimMod">تصفية محتوى</button>
+                </div>
+                <p id="portalMsg" style="margin-top:.8rem;font-size:.8rem;color:#a5f3fc"></p>
+              </div>
+              <div>
+                <div class="stat" id="portalFocusCard">
+                  <div class="label">الباب النشط</div>
+                  <div class="value" style="font-size:1.3rem" id="portalFocusTitle">👤 رؤية العميل</div>
+                  <div class="hint" id="portalFocusHint">إنشاء طلبات وتجميد الضمان ينعكس على الرسوم فورًا</div>
+                </div>
+                <div class="grid grid-3" style="margin-top:.8rem">
+                  <div class="stat"><div class="label">Escrow</div><div class="value" style="font-size:1rem" id="portalEscrowMini">—</div></div>
+                  <div class="stat amber"><div class="label">Providers</div><div class="value" style="font-size:1rem" id="portalProvMini">—</div></div>
+                  <div class="stat warn"><div class="label">Security</div><div class="value" style="font-size:1rem" id="portalSecMini">—</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:1rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:center;background:linear-gradient(90deg,rgba(2,11,28,.9),rgba(14,116,144,.25),rgba(194,65,12,.15))">
+            <div style="display:flex;align-items:center;gap:.65rem">
+              <span id="liveDot" style="width:10px;height:10px;border-radius:50%;background:#22d3ee;box-shadow:0 0 12px #22d3ee;animation:pulse 1.4s infinite"></span>
+              <div>
+                <strong>Live Operations & Analytics</strong>
+                <div style="font-size:.72rem;color:var(--muted)" id="liveStamp">—</div>
+              </div>
+            </div>
+            <div class="chips">
+              <span class="chip cyan">Escrow</span>
+              <span class="chip amber">Security</span>
+              <span class="chip ok">Audit</span>
+            </div>
+          </div>
+
+          <div class="grid grid-4" id="dashStats"></div>
+          <div class="grid grid-4" id="dashKpis" style="margin-top:1rem"></div>
+
+          <div class="grid grid-2" style="margin-top:1rem">
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem">
+                <div>
+                  <h4 style="margin:0">Escrow Volume & Transactions</h4>
+                  <p style="font-size:.72rem;color:var(--muted);margin:0">Cyan مجمّد · Amber مُفرَج · 14 يوم</p>
+                </div>
+                <div class="chips">
+                  <span class="chip cyan">Held</span>
+                  <span class="chip amber">Released</span>
+                </div>
+              </div>
+              <div id="escrowChart" style="height:210px"></div>
+              <div id="escrowTxMini" style="margin-top:.75rem"></div>
+            </div>
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem">
+                <div>
+                  <h4 style="margin:0">Security Live · VPN & Moderation</h4>
+                  <p style="font-size:.72rem;color:var(--muted);margin:0">معدل الحظر والتنبيهات اليومية</p>
+                </div>
+                <span class="badge badge-escrow" id="secOpenBadge">0 مفتوح</span>
+              </div>
+              <div id="securityChart" style="height:210px"></div>
+              <div class="grid grid-4" id="secMiniStats" style="margin-top:.75rem"></div>
+            </div>
+          </div>
+
+          <div class="grid grid-2" style="margin-top:1rem">
+            <div class="card">
+              <h4>أحدث الطلبات · Live Table</h4>
+              <div id="dashRecentOrders"></div>
+            </div>
+            <div class="card">
+              <h4>توزيع الحالات + Audit Logs</h4>
+              <div id="dashStatusBreakdown" style="margin-bottom:1rem"></div>
+              <div id="dashAuditLogs" class="wa-log" style="max-height:260px"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ORDERS & ESCROW (interactive core) -->
+        <section id="sec-orders" class="section">
+          <div class="page-head">
+            <div>
+              <h3>الطلبات والضمان · Orders & Escrow</h3>
+              <p>إضافة طلب · تحديث الحالة · تجميد/تحديث مبلغ الضمان · إشعار واتساب للمنسق</p>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-amber" id="btnNotifyAllEscrow">إشعار جماعي للضمان</button>
+            </div>
+          </div>
+
+          <div class="grid grid-4" id="escrowStats" style="margin-bottom:1rem"></div>
+
+          <div class="grid grid-orders">
+            <!-- Create / Edit form -->
+            <div class="card">
+              <h4 id="orderFormTitle">إضافة طلب جديد</h4>
+              <form id="orderForm">
+                <input type="hidden" id="fId" value="" />
+                <div class="field">
+                  <label>عنوان الطلب</label>
+                  <input id="fTitle" required placeholder="مثال: تطوير منصة حجوزات" />
+                </div>
+                <div class="field">
+                  <label>العميل</label>
+                  <input id="fClient" required list="clientsList" placeholder="اسم العميل" />
+                  <datalist id="clientsList"></datalist>
+                </div>
+                <div class="field">
+                  <label>مقدم الخدمة</label>
+                  <input id="fProvider" required list="providersList" placeholder="اسم المقدم" />
+                  <datalist id="providersList"></datalist>
+                </div>
+                <div class="field">
+                  <label>الوصف</label>
+                  <textarea id="fDesc" placeholder="تفاصيل النطاق والمتطلبات"></textarea>
+                </div>
+                <div class="field-row">
+                  <div class="field">
+                    <label>مبلغ الضمان (USD)</label>
+                    <input id="fAmount" type="number" min="1" step="0.01" required value="1000" />
+                  </div>
+                  <div class="field">
+                    <label>أيام التسليم</label>
+                    <input id="fDays" type="number" min="1" value="7" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label>الحالة الابتدائية</label>
+                  <select id="fStatus">
+                    <option value="negotiating">قيد التفاوض</option>
+                    <option value="escrow">في الضمان Escrow</option>
+                    <option value="completed">مكتمل</option>
+                  </select>
+                </div>
+                <div class="btn-row">
+                  <button class="btn btn-primary" type="submit" id="btnSaveOrder">حفظ الطلب</button>
+                  <button class="btn btn-ghost" type="button" id="btnCancelEdit">إلغاء التعديل</button>
+                </div>
+                <p style="margin-top:.7rem;font-size:.75rem;color:var(--muted)">
+                  عند الحالة «في الضمان» يُحدَّث رصيد Escrow تلقائيًا ويُجهَّز إشعار واتساب للمنسق.
+                </p>
+              </form>
+            </div>
+
+            <!-- Orders list -->
+            <div>
+              <div class="card" style="margin-bottom:1rem">
+                <div style="display:flex;justify-content:space-between;gap:.75rem;flex-wrap:wrap;align-items:center">
+                  <h4 style="margin:0">قائمة الطلبات</h4>
+                  <div class="btn-row">
+                    <select id="filterStatus" class="btn btn-ghost btn-sm" style="padding:.45rem .7rem">
+                      <option value="all">كل الحالات</option>
+                      <option value="negotiating">قيد التفاوض</option>
+                      <option value="escrow">في الضمان</option>
+                      <option value="completed">مكتمل</option>
+                      <option value="cancelled">ملغى</option>
+                    </select>
+                    <input id="filterQ" class="btn btn-ghost btn-sm" style="padding:.45rem .7rem;min-width:160px" placeholder="بحث..." />
+                  </div>
+                </div>
+              </div>
+              <div id="ordersList"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- DISPUTES & ARBITRATION SANDBOX -->
+        <section id="sec-disputes" class="section">
+          <div class="page-head">
+            <div>
+              <h3>مركز النزاعات والتحكيم العادل</h3>
+              <p>Escrow Disputes & Resolution Sandbox · حماية الطرفين 100%</p>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" id="btnDisputeSandboxRefund">محاكاة كاملة → استرداد عميل</button>
+              <button class="btn btn-amber" id="btnDisputeSandboxRelease">محاكاة كاملة → إفراج مقدم</button>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:1rem;background:linear-gradient(165deg,#020b1c,#0a1628,#1a1230);border-color:rgba(34,211,238,.25)">
+            <div class="tag" style="margin-bottom:.55rem">
+              <span class="dot cyan"></span> ESCROW PROTECTED
+              <span style="opacity:.4">·</span> FAIR MEDIATION
+              <span class="dot amber"></span>
+            </div>
+            <p style="color:#cbd5e1;font-size:.9rem;line-height:1.8;max-width:52rem">
+              افتح نزاعًا على طلب في مرحلة الضمان، ارفع الأدلة، تابع التحقيق والوساطة،
+              ثم أصدر قرار اللجنة: إعادة الأموال للعميل أو إطلاقها لمقدم الخدمة.
+              <strong style="color:#67e8f9"> أموال الضمان محمية 100%</strong> حتى القرار النهائي.
+            </p>
+            <div class="grid grid-4" style="margin-top:1rem" id="disputeStats"></div>
+          </div>
+
+          <div class="grid grid-orders">
+            <div class="card">
+              <h4>فتح نزاع</h4>
+              <div class="field">
+                <label>طلب في الضمان</label>
+                <select id="disputeOrderSelect"></select>
+              </div>
+              <div class="field">
+                <label>سبب النزاع</label>
+                <textarea id="disputeReason">خلاف على جودة التسليم أثناء الضمان — أطلب تحكيمًا عادلاً.</textarea>
+              </div>
+              <div class="field">
+                <label>دليل أولي</label>
+                <input id="disputeEvidence" value="ملاحظات على التسليم + لقطة شاشة" />
+              </div>
+              <button class="btn btn-primary" id="btnOpenDispute">فتح نزاع + حماية الضمان</button>
+              <p id="disputeMsg" style="margin-top:.75rem;font-size:.8rem;color:#67e8f9"></p>
+            </div>
+            <div>
+              <div class="card" style="margin-bottom:1rem">
+                <h4>سجل النزاعات</h4>
+                <div id="disputesList"></div>
+              </div>
+              <div class="card" id="disputeDetailCard">
+                <h4>تفاصيل النزاع / مسار التحكيم</h4>
+                <div id="disputeStages" class="btn-row" style="margin-bottom:.8rem"></div>
+                <div id="disputeProtection" class="card flat" style="background:rgba(34,211,238,.08);border-color:rgba(34,211,238,.25);margin-bottom:.8rem;font-size:.85rem;line-height:1.7"></div>
+                <div class="grid grid-2">
+                  <div>
+                    <h4 style="font-size:.95rem">الأدلة</h4>
+                    <div id="disputeEvidenceList"></div>
+                    <div class="btn-row" style="margin-top:.6rem">
+                      <button class="btn btn-ghost btn-sm" id="btnAddClientEv">+ دليل عميل</button>
+                      <button class="btn btn-ghost btn-sm" id="btnAddProviderEv">+ دليل مقدم</button>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 style="font-size:.95rem">الخط الزمني</h4>
+                    <div id="disputeTimeline" class="wa-log" style="max-height:220px"></div>
+                  </div>
+                </div>
+                <div class="btn-row" style="margin-top:1rem">
+                  <button class="btn btn-ghost" id="btnInvestigate">بدء التحقيق</button>
+                  <button class="btn btn-ghost" id="btnMediate">جلسة وساطة</button>
+                  <button class="btn btn-primary" id="btnResolveRefund">قرار: استرداد للعميل</button>
+                  <button class="btn btn-amber" id="btnResolveRelease">قرار: إفراج للمقدم</button>
+                </div>
+                <div id="disputeDecision" style="margin-top:.8rem;font-size:.85rem"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- GLOBAL REVENUE ANALYTICS -->
+        <section id="sec-revenue" class="section">
+          <div class="page-head">
+            <div>
+              <h3>تحليلات الإيرادات والمدفوعات العالمية</h3>
+              <p>GMV · عمولة المنصة · الضمان · Payouts Status</p>
+            </div>
+            <button class="btn btn-ghost" id="btnRefreshRevenue">تحديث</button>
+          </div>
+          <div class="card" style="margin-bottom:1rem;background:linear-gradient(165deg,#020b1c,#0a1628,#122033);border-color:rgba(34,211,238,.22)">
+            <div class="tag" style="margin-bottom:.5rem">
+              <span class="dot cyan"></span> GLOBAL REVENUE
+              <span style="opacity:.4">·</span> PAYOUTS
+              <span class="dot amber"></span>
+            </div>
+            <p style="color:#94a3b8;font-size:.88rem;max-width:48rem;line-height:1.75">
+              لوحة تفاعلية لحجم الأرباح، نسبة عمولة المنصة (10%)، المدفوعات المعلقة والمفرجة عبر Escrow،
+              وجدول حالات تحويل مستحقات مقدمي الخدمات.
+            </p>
+          </div>
+          <div class="grid grid-4" id="revenueKpis" style="margin-bottom:1rem"></div>
+          <div class="grid grid-2" style="margin-bottom:1rem">
+            <div class="card">
+              <h4>منحنى الإيرادات</h4>
+              <div id="revenueChart" style="height:220px"></div>
+              <div class="chips" style="margin-top:.5rem">
+                <span class="chip cyan">GMV</span>
+                <span class="chip amber">Held</span>
+                <span class="chip ok">Provider Net</span>
+              </div>
+            </div>
+            <div class="card">
+              <h4>عمولة المنصة وتوزيع الحالات</h4>
+              <div id="revenueCommission" style="font-size:2rem;font-weight:900;background:linear-gradient(90deg,#22d3ee,#fb923c);-webkit-background-clip:text;color:transparent">10%</div>
+              <div id="revenueBreakdown" style="margin-top:.8rem"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:center;margin-bottom:.75rem">
+              <h4 style="margin:0">Payouts Status · مستحقات المقدمين</h4>
+              <select id="payoutFilter" class="btn btn-ghost btn-sm">
+                <option value="all">كل الحالات</option>
+                <option value="pending_clearance">بانتظار إخلاء الضمان</option>
+                <option value="processing">قيد المعالجة</option>
+                <option value="paid">تم التحويل</option>
+                <option value="on_hold">موقوف</option>
+                <option value="failed">فشل</option>
+              </select>
+            </div>
+            <div id="payoutsTable"></div>
+          </div>
+        </section>
+
+        <!-- PLATFORM SETTINGS & CURRENCY -->
+        <section id="sec-settings" class="section">
+          <div class="page-head">
+            <div>
+              <h3>إعدادات المنصة وتعدد العملات</h3>
+              <p>USD · MAD · EUR · العمولة · واتساب · الصيانة</p>
+            </div>
+            <button class="btn btn-primary" id="btnSaveSettings">حفظ الإعدادات</button>
+          </div>
+          <div class="card" style="margin-bottom:1rem;background:linear-gradient(165deg,#020b1c,#0a1628,#1a1230);border-color:rgba(34,211,238,.25)">
+            <div class="tag"><span class="dot cyan"></span> PLATFORM SETTINGS <span class="dot amber"></span></div>
+            <p style="margin-top:.5rem;color:#94a3b8;font-size:.88rem;line-height:1.75">بدّل العملة الافتراضية لتحديث كل العدادات المالية فورًا، وعدّل عمولة المنصة وإشعارات واتساب ووضع الصيانة.</p>
+            <div class="chips" style="margin-top:.75rem" id="settingsChips"></div>
+          </div>
+          <div class="grid grid-2">
+            <div class="card">
+              <h4>التحكم</h4>
+              <div class="field">
+                <label>العملة الافتراضية</label>
+                <select id="setCurrency">
+                  <option value="USD">USD — دولار</option>
+                  <option value="MAD">MAD — درهم مغربي</option>
+                  <option value="EUR">EUR — يورو</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>عمولة المنصة %</label>
+                <input id="setFee" type="number" min="0" max="40" step="0.1" value="10" />
+              </div>
+              <div class="field-row">
+                <div class="field"><label>1 USD = MAD</label><input id="setMad" type="number" step="0.01" value="10.1" /></div>
+                <div class="field"><label>1 USD = EUR</label><input id="setEur" type="number" step="0.0001" value="0.92" /></div>
+              </div>
+              <label style="display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.7rem .85rem;border:1px solid var(--navy-border);border-radius:12px;margin-bottom:.7rem">
+                <span>إشعارات واتساب</span><input type="checkbox" id="setWa" checked />
+              </label>
+              <label style="display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.7rem .85rem;border:1px solid var(--navy-border);border-radius:12px;margin-bottom:.7rem">
+                <span>وضع الصيانة</span><input type="checkbox" id="setMaint" />
+              </label>
+              <p id="settingsMsg" style="font-size:.8rem;color:#67e8f9"></p>
+            </div>
+            <div class="card">
+              <h4>معاينة العدادات بالعملة المختارة</h4>
+              <div class="grid grid-2" id="settingsPreview"></div>
+              <p style="margin-top:.8rem;font-size:.75rem;color:var(--muted)">عند الحفظ تُحدَّث Live Ops والإيرادات والضمان في الواجهة فورًا.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- DIGITAL INVOICES -->
+        <section id="sec-invoices" class="section">
+          <div class="page-head">
+            <div>
+              <h3>الفواتير والإيصالات الرقمية</h3>
+              <p>توليد فاتورة رسمية لكل معاملة Escrow · طباعة · تحميل</p>
+            </div>
+            <button class="btn btn-primary" id="btnIssueInvoice">توليد فاتورة للطلب المحدد</button>
+          </div>
+          <div class="card" style="margin-bottom:1rem;background:linear-gradient(165deg,#020b1c,#0a1628,#122033);border-color:rgba(34,211,238,.25)">
+            <div class="tag"><span class="dot cyan"></span> DIGITAL INVOICES <span class="dot amber"></span></div>
+            <p style="margin-top:.45rem;color:#94a3b8;font-size:.88rem;line-height:1.75">فاتورة WASL تتضمن العميل، المقدم، الخدمة، رقم المعاملة، والعمولة — بتصميم فاخر وقابل للطباعة.</p>
+            <div class="chips" id="invoiceStatsChips" style="margin-top:.7rem"></div>
+          </div>
+          <div class="grid grid-orders">
+            <div class="card">
+              <h4>المعاملات القابلة للفوترة</h4>
+              <div class="field">
+                <label>اختر طلبًا</label>
+                <select id="invoiceOrderSelect"></select>
+              </div>
+              <button class="btn btn-amber" id="btnPreviewInvoice">معاينة / توليد</button>
+              <div id="invoicesList" style="margin-top:1rem"></div>
+            </div>
+            <div class="card" style="background:#070f1c">
+              <div style="display:flex;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-bottom:.75rem">
+                <h4 style="margin:0;color:#e2e8f0">معاينة الفاتورة</h4>
+                <div class="btn-row">
+                  <button class="btn btn-primary btn-sm" id="btnPrintInvoice">طباعة</button>
+                  <button class="btn btn-ghost btn-sm" id="btnDownloadInvoice">تحميل HTML</button>
+                </div>
+              </div>
+              <div id="invoiceSheet"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROVIDERS -->
+        <section id="sec-providers" class="section">
+          <div class="page-head">
+            <div>
+              <h3>مقدمو الخدمات والحرفيون</h3>
+              <p>Provider Profiles & Portfolio · مهارات · قطاع · معرض أعمال</p>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" id="btnNewProvider">+ ملف جديد</button>
+            </div>
+          </div>
+          <div class="grid grid-4" id="providerStats" style="margin-bottom:1rem"></div>
+          <div class="grid grid-orders">
+            <div class="card">
+              <h4 id="providerFormTitle">ملف مقدم / حرفي</h4>
+              <form id="providerForm">
+                <input type="hidden" id="pEditId" value="" />
+                <div class="field">
+                  <label>الاسم</label>
+                  <input id="pName" required placeholder="اسم المستقل أو الحرفي" />
+                </div>
+                <div class="field">
+                  <label>العنوان المهني</label>
+                  <input id="pHeadline" required placeholder="نجّار / مصمم / مطور..." />
+                </div>
+                <div class="field">
+                  <label>نبذة</label>
+                  <textarea id="pBio" placeholder="خبراتك ونطاق خدماتك"></textarea>
+                </div>
+                <div class="field">
+                  <label>المهارات (فاصلة)</label>
+                  <input id="pSkills" placeholder="نجارة، دهان، React, Figma" />
+                </div>
+                <div class="field-row">
+                  <div class="field">
+                    <label>القطاع</label>
+                    <select id="pSector">
+                      <option value="تقنية">تقنية</option>
+                      <option value="تصميم">تصميم</option>
+                      <option value="حرفي">حرفي</option>
+                      <option value="قانون">قانون</option>
+                      <option value="منزلية">منزلية</option>
+                      <option value="أخرى">أخرى</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>التوفر</label>
+                    <select id="pAvailability">
+                      <option value="available">متاح</option>
+                      <option value="busy">مشغول</option>
+                      <option value="away">بعيد</option>
+                      <option value="offline">غير متصل</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div class="field">
+                    <label>سنوات الخبرة</label>
+                    <input id="pYears" type="number" min="0" value="3" />
+                  </div>
+                  <div class="field">
+                    <label>الأجر/ساعة USD</label>
+                    <input id="pRate" type="number" min="0" step="0.01" value="40" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label>رابط معرض / موقع</label>
+                  <input id="pPortfolioUrl" placeholder="https://..." />
+                </div>
+                <div class="btn-row">
+                  <button class="btn btn-primary" type="submit">حفظ الملف</button>
+                  <button class="btn btn-ghost" type="button" id="btnCancelProvider">إلغاء</button>
+                </div>
+              </form>
+              <hr style="border:none;border-top:1px solid var(--navy-border);margin:1rem 0" />
+              <h4>إضافة عمل للمعرض</h4>
+              <form id="portfolioForm">
+                <div class="field">
+                  <label>مقدم الخدمة</label>
+                  <select id="pfProvider" required></select>
+                </div>
+                <div class="field">
+                  <label>عنوان العمل</label>
+                  <input id="pfTitle" required placeholder="مشروع مكتمل" />
+                </div>
+                <div class="field">
+                  <label>الوصف</label>
+                  <textarea id="pfDesc"></textarea>
+                </div>
+                <div class="field">
+                  <label>رابط صورة / مشروع</label>
+                  <input id="pfUrl" placeholder="https://..." />
+                </div>
+                <div class="field">
+                  <label>وسوم</label>
+                  <input id="pfTags" placeholder="خشب، فاخر، UI" />
+                </div>
+                <button class="btn btn-amber" type="submit">إضافة للمعرض</button>
+              </form>
+            </div>
+            <div>
+              <div class="card" style="margin-bottom:1rem">
+                <div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;justify-content:space-between">
+                  <h4 style="margin:0">الدليل التفاعلي</h4>
+                  <input id="providerFilter" class="btn btn-ghost btn-sm" style="min-width:180px;padding:.45rem .7rem" placeholder="بحث بالاسم أو المهارة" />
+                </div>
+              </div>
+              <div id="providersGrid"></div>
+              <div class="card" style="margin-top:1rem">
+                <h4>معرض الأعمال المحدد</h4>
+                <div id="portfolioGallery" class="grid grid-2"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECURITY -->
+        <section id="sec-security" class="section">
+          <div class="page-head">
+            <div>
+              <h3>الأمن والامتثال</h3>
+              <p>كشف VPN · كلمات محظورة · سياسة المنصة النظيفة</p>
+            </div>
+          </div>
+          <div class="grid grid-2">
+            <div class="card">
+              <h4>فحص IP / VPN (محاكاة واجهة)</h4>
+              <div class="field">
+                <label>عنوان IP</label>
+                <input id="secIp" value="203.0.113.99" />
+              </div>
+              <div class="btn-row">
+                <button class="btn btn-primary" id="btnInspectIp">فحص وحظر عند التهديد</button>
+              </div>
+              <pre id="secIpResult" style="margin-top:.8rem;font-size:.78rem;color:var(--muted);white-space:pre-wrap"></pre>
+            </div>
+            <div class="card">
+              <h4>تصفية المحتوى</h4>
+              <div class="field">
+                <label>نص للفحص</label>
+                <textarea id="secText" placeholder="جرّب: تحويل خارجي أو محتوى سليم"></textarea>
+              </div>
+              <button class="btn btn-ghost" id="btnModeration">فحص النص</button>
+              <pre id="secModResult" style="margin-top:.8rem;font-size:.78rem;color:var(--muted);white-space:pre-wrap"></pre>
+            </div>
+          </div>
+          <div class="card" style="margin-top:1rem">
+            <h4>قواعد الأمان المعتمدة</h4>
+            <ul class="list-clean">
+              <li>🚫 حظر VPN / Proxy / Tor عند التسجيل والدخول</li>
+              <li>💰 المدفوعات عبر Escrow فقط حتى التراضي</li>
+              <li>🧼 رفض المحرمات والشبهات والتجارة المخالفة</li>
+              <li>💬 واتساب للمنسق كإشعار حالة — لا تفاوض خارج المنصة</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- ASSISTANT -->
+        <section id="sec-assistant" class="section">
+          <div class="page-head">
+            <div>
+              <h3>المساعد الذكي</h3>
+              <p>WASL_AI_SYSTEM_PROMPT · إقناع · Escrow · سياسة نظيفة · منع VPN</p>
+            </div>
+          </div>
+          <div class="grid grid-orders">
+            <div class="card assistant-box">
+              <div class="chat" id="chatBox"></div>
+              <form id="chatForm">
+                <div class="field" style="margin:0">
+                  <textarea id="chatInput" placeholder="اسأل عن الضمان، التسجيل، أو سياسة VPN..." rows="2"></textarea>
+                </div>
+                <div class="btn-row" style="margin-top:.6rem">
+                  <button class="btn btn-primary" type="submit">إرسال</button>
+                  <button class="btn btn-ghost" type="button" data-q="ما هو نظام الضمان Escrow؟">Escrow</button>
+                  <button class="btn btn-ghost" type="button" data-q="لماذا يُمنع VPN؟">VPN</button>
+                  <button class="btn btn-ghost" type="button" data-q="كيف أبدأ كعميل؟">ابدأ</button>
+                </div>
+              </form>
+            </div>
+            <div class="card" style="background:linear-gradient(165deg,#020b1c,#0d1b2a)">
+              <h4 style="color:#67e8f9;font-size:.85rem;letter-spacing:.06em">WASL_AI_SYSTEM_PROMPT</h4>
+              <pre style="white-space:pre-wrap;font-size:.72rem;line-height:1.7;color:#cbd5e1;margin-top:.6rem" id="promptPreview"></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- WHATSAPP -->
+        <section id="sec-whatsapp" class="section">
+          <div class="page-head">
+            <div>
+              <h3>مركز إشعارات واتساب والمنسقين</h3>
+              <p>WhatsApp Cloud API · اختبار الإرسال · حالة الاتصال · Audit Dispatch Logs</p>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-ghost" id="btnProbeWa">فحص الاتصال</button>
+              <button class="btn btn-primary" id="btnTestWa">اختبار إرسال</button>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:1rem;background:linear-gradient(165deg,#020b1c,#0a1628,#122033);border-color:rgba(34,211,238,.25)">
+            <div class="tag"><span class="dot cyan"></span> DISPATCH CENTER <span class="dot amber"></span></div>
+            <p style="margin-top:.45rem;color:#94a3b8;font-size:.88rem;line-height:1.75">
+              إرسال تلقائي للمنسقين عند إنشاء الطلبات وتمويل/اكتمال الضمان، مع سجل تدقيق كامل وحالة اتصال مباشرة (Mock/Cloud).
+            </p>
+            <div class="chips" style="margin-top:.7rem">
+              <span class="chip cyan" id="waConnChip">الاتصال: Mock</span>
+              <span class="chip ok" id="waEnabledChip">مفعّل</span>
+              <span class="chip amber" id="waCoordChip">منسق +966******000</span>
+            </div>
+          </div>
+          <div class="grid grid-4" style="margin-bottom:1rem">
+            <div class="stat"><div class="label">إجمالي السجل</div><div class="value" id="waTotal">0</div></div>
+            <div class="stat ok"><div class="label">مرسل/Mock</div><div class="value" id="waSent">0</div></div>
+            <div class="stat amber"><div class="label">متخطى</div><div class="value" id="waSkipped">0</div></div>
+            <div class="stat warn"><div class="label">فشل</div><div class="value" id="waFailed">0</div></div>
+          </div>
+          <div class="grid grid-orders">
+            <div class="card">
+              <h4>لوحة الإرسال</h4>
+              <div class="field">
+                <label>الطلب</label>
+                <select id="waOrderSelect"></select>
+              </div>
+              <div class="field">
+                <label>قالب الحدث</label>
+                <select id="waEventType">
+                  <option value="manual_test">اختبار يدوي</option>
+                  <option value="order_created">طلب جديد</option>
+                  <option value="escrow_funded">تمويل ضمان</option>
+                  <option value="deal_ready_for_execution">جاهز للتنفيذ</option>
+                  <option value="order_completed">اكتمال صفقة</option>
+                  <option value="escrow_released">إفراج ضمان</option>
+                  <option value="dispute_opened">فتح نزاع</option>
+                  <option value="invoice_issued">إصدار فاتورة</option>
+                  <option value="connection_probe">فحص اتصال</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" id="btnDispatchWa">إرسال / محاكاة القالب</button>
+              <button class="btn btn-ghost" id="btnDispatchLatest" style="margin-top:.5rem;width:100%">إرسال لآخر طلب</button>
+              <p id="waDispatchMsg" style="margin-top:.7rem;font-size:.8rem;color:#67e8f9"></p>
+            </div>
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;gap:.75rem;flex-wrap:wrap;align-items:center;margin-bottom:.6rem">
+                <h4 style="margin:0">Audit Dispatch Logs</h4>
+                <select id="waFilter" class="btn btn-ghost btn-sm">
+                  <option value="all">الكل</option>
+                  <option value="sent">sent</option>
+                  <option value="mocked">mocked</option>
+                  <option value="skipped">skipped</option>
+                  <option value="failed">failed</option>
+                </select>
+              </div>
+              <div class="wa-log" id="waLog" style="max-height:480px"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BRAND -->
+        <section id="sec-brand" class="section">
+          <div class="page-head">
+            <div>
+              <h3>الهوية البصرية</h3>
+              <p>WASL Global Digital Platform · Midnight Navy · Cyan · Amber</p>
+            </div>
+          </div>
+          <div class="grid grid-2">
+            <div class="hero-logo">
+              <img src="/images/wasl-logo.png" alt="WASL full brand" onerror="this.src='/images/wasl-mark.png'" />
+            </div>
+            <div class="card">
+              <h4>عناصر الشعار</h4>
+              <ul class="list-clean">
+                <li>🌌 خلفية Midnight Navy فاخرة</li>
+                <li>🌐 شبكة عقد رقمية عالمية للوساطة</li>
+                <li>💙 Cyan Node = العميل / الطلب</li>
+                <li>🧡 Amber Node = مقدم الخدمة</li>
+                <li>🔤 WASL + GLOBAL DIGITAL PLATFORM</li>
+              </ul>
+              <div class="pillars" style="margin-top:1rem">
+                <div class="pillar"><div class="swatch navy"></div><div class="body"><strong>Navy</strong><span>#020b1c</span></div></div>
+                <div class="pillar"><div class="swatch cyan"></div><div class="body"><strong>Cyan</strong><span>#22d3ee</span></div></div>
+                <div class="pillar"><div class="swatch amber"></div><div class="body"><strong>Amber</strong><span>#fb923c</span></div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <p class="footer-note">WASL · Global Digital Platform · Orders & Escrow Management · Frontend single-file build</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: update escrow amount -->
+  <div class="modal-back" id="amountModal">
+    <div class="modal">
+      <h4>تحديث مبلغ الضمان</h4>
+      <p>يُحدَّث رصيد Escrow الإجمالي تلقائيًا حسب حالة الطلب.</p>
+      <input type="hidden" id="amtOrderId" />
+      <div class="field">
+        <label>المبلغ الجديد (USD)</label>
+        <input type="number" id="amtValue" min="1" step="0.01" />
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btnSaveAmount">حفظ المبلغ</button>
+        <button class="btn btn-ghost" id="btnCloseAmount">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-wrap" id="toasts"></div>
+
+  <script>
+    /***********************
+     * WASL Frontend Store
+     ***********************/
+    const FEE_PERCENT = 10;
+    const COORDINATOR_PHONE_MASK = "+966******000";
+    const STORAGE_KEY = "wasl_frontend_v1";
+
+    const STATUS = {
+      negotiating: { label: "قيد التفاوض", badge: "badge-negotiating", escrow: false },
+      escrow: { label: "في الضمان Escrow", badge: "badge-escrow", escrow: true },
+      completed: { label: "مكتمل", badge: "badge-completed", escrow: false },
+      cancelled: { label: "ملغى", badge: "badge-cancelled", escrow: false },
+    };
+
+    const WASL_AI_SYSTEM_PROMPT = `أنت المساعد الذكي الرسمي لمنصة "وصل" (WASL)، وهي منصة وساطة عالمية تربط العملاء بمقدمي الخدمات والحرف المختلفة.
+مهامك الأساسية:
+1. الإجابة على استفسارات القادمين الجدد بكل احترافية وإقناعهم بمميزات المنصة.
+2. توضيح نظام الضمان المالي (Escrow) وكيفية تجميد الأموال حتى التراضي.
+3. الالتزام الصارم بسياسة المنصة النظيفة: رفض تام لأي نقاش أو تلميح يتعلق بمحتوى محرم، أو شبهات، أو تجارة مخالفة.
+4. توجيه المستخدمين لاتباع قواعد الأمان ومنع استخدام شبكات الـ VPN.`;
+
+    const DEMO_THREAT_IPS = {
+      "203.0.113.99": { isVpn: true, isProxy: true, isTor: false, isDatacenter: false },
+      "198.51.100.66": { isVpn: false, isProxy: false, isTor: true, isDatacenter: false },
+      "45.95.169.10": { isVpn: true, isProxy: false, isTor: false, isDatacenter: false },
+      "5.188.206.100": { isVpn: false, isProxy: false, isTor: false, isDatacenter: true },
+    };
+
+    const BANNED = ["احتيال", "نصب", "تحويل خارجي", "scam", "fraud", "خارج المنصة"];
+
+    function uid(prefix = "WSL") {
+      const t = new Date();
+      const stamp = `${String(t.getFullYear()).slice(2)}${String(t.getMonth()+1).padStart(2,"0")}${String(t.getDate()).padStart(2,"0")}`;
+      return `${prefix}-${stamp}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
+    }
+
+    function money(n) {
+      const v = Number(n) || 0;
+      return new Intl.NumberFormat("ar-SA", { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(v);
+    }
+
+    function nowLabel() {
+      return new Intl.DateTimeFormat("ar-SA", {
+        year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"
+      }).format(new Date());
+    }
+
+    function calcFee(amount) {
+      const a = Number(amount) || 0;
+      const fee = Math.round(a * (FEE_PERCENT / 100) * 100) / 100;
+      const net = Math.round((a - fee) * 100) / 100;
+      return { fee, net };
+    }
+
+    function defaultState() {
+      return {
+        orders: [
+          {
+            id: "o1",
+            orderNumber: "WSL-260326-A1B2C",
+            title: "تطوير منصة حجوزات عيادات",
+            client: "أحمد المحمود",
+            provider: "خالد التقني",
+            description: "MVP حجوزات طبية + لوحة طبيب وإشعارات — Next.js",
+            amount: 3500,
+            days: 21,
+            status: "escrow",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+          {
+            id: "o2",
+            orderNumber: "WSL-260326-D4E5F",
+            title: "إعادة تصميم تطبيق جوال",
+            client: "سارة العتيبي",
+            provider: "نورة المصممة",
+            description: "تحديث UX لتطبيق توصيل مع نظام تصميم عربي",
+            amount: 1800,
+            days: 14,
+            status: "negotiating",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+          {
+            id: "o3",
+            orderNumber: "WSL-260325-G7H8I",
+            title: "مراجعة عقد شراكة",
+            client: "أحمد المحمود",
+            provider: "عمر المستشار",
+            description: "صياغة بنود حماية للأطراف",
+            amount: 600,
+            days: 5,
+            status: "completed",
+            createdAt: new Date(Date.now() - 86400000).toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+        ],
+        providers: [
+          {
+            id: "pr1",
+            name: "خالد التقني",
+            headline: "Full-stack · Next.js",
+            bio: "بناء منصات رقمية قابلة للتوسع مع PostgreSQL.",
+            skills: ["Next.js", "TypeScript", "PostgreSQL"],
+            sector: "تقنية",
+            rate: 45,
+            years: 8,
+            availability: "available",
+            rating: 4.85,
+            portfolio: [
+              { id: "pf1", title: "منصة حجوزات طبية", description: "MVP + لوحة طبيب", url: "https://example.com/clinic", tags: ["Next.js", "Escrow"] },
+              { id: "pf2", title: "لوحة تحليلات حية", description: "Charts + Audit", url: "", tags: ["Analytics"] },
+            ],
+          },
+          {
+            id: "pr2",
+            name: "نورة المصممة",
+            headline: "UI/UX وهوية بصرية",
+            bio: "تجارب عربية أصيلة مع معايير وصول عالمية.",
+            skills: ["Figma", "Branding", "UI/UX"],
+            sector: "تصميم",
+            rate: 35,
+            years: 5,
+            availability: "available",
+            rating: 4.7,
+            portfolio: [
+              { id: "pf3", title: "هوية WASL", description: "Cyan × Amber network mark", url: "/images/wasl-logo.png", tags: ["Brand"] },
+            ],
+          },
+          {
+            id: "pr3",
+            name: "عمر المستشار",
+            headline: "استشارات قانونية للشركات",
+            bio: "عقود وتأسيس وحماية ملكية فكرية.",
+            skills: ["عقود", "شركات", "تحكيم"],
+            sector: "قانون",
+            rate: 80,
+            years: 12,
+            availability: "busy",
+            rating: 4.9,
+            portfolio: [
+              { id: "pf4", title: "حزمة عقود شراكة", description: "نماذج ثنائية اللغة", tags: ["Legal"] },
+            ],
+          },
+          {
+            id: "pr4",
+            name: "سالم الحرفي",
+            headline: "نجارة وديكور خشبي",
+            bio: "أثاث فاخر وترميم منزلي حسب الطلب.",
+            skills: ["نجارة", "ديكور", "ترميم"],
+            sector: "حرفي",
+            rate: 28,
+            years: 15,
+            availability: "available",
+            rating: 4.6,
+            portfolio: [
+              { id: "pf5", title: "مكتبة جدارية", description: "خشب ساج فاخر", tags: ["خشب", "منزلي"] },
+            ],
+          },
+        ],
+        whatsapp: [],
+        clients: ["أحمد المحمود", "سارة العتيبي", "فيصل الشمري"],
+      };
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return defaultState();
+        return { ...defaultState(), ...JSON.parse(raw) };
+      } catch {
+        return defaultState();
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    let state = loadState();
+
+    /***********************
+     * Toast + WhatsApp
+     ***********************/
+    function toast(title, body = "", type = "") {
+      const el = document.createElement("div");
+      el.className = `toast ${type}`;
+      el.innerHTML = `<strong>${title}</strong><p>${body}</p>`;
+      document.getElementById("toasts").appendChild(el);
+      setTimeout(() => el.remove(), 4500);
+    }
+
+    function buildCoordinatorMessage(order, eventType = "deal_ready_for_execution") {
+      const titles = {
+        deal_ready_for_execution: "صفقة جديدة جاهزة للتنفيذ",
+        escrow_funded: "تم تجميد المبلغ في الضمان",
+        order_completed: "اكتملت الصفقة بعد التراضي",
+        amount_updated: "تحديث مبلغ الضمان",
+        manual_test: "اختبار إشعار المنسق",
+      };
+      return `🔔 *منصة وصل — ${titles[eventType] || "إشعار تشغيلي"}*\n\n` +
+        `📦 رقم الطلب: ${order.orderNumber}\n` +
+        `👤 العميل: ${order.client}\n` +
+        `🛠️ مقدم الخدمة: ${order.provider}\n` +
+        `📝 الخدمة: ${order.title}\n` +
+        `💰 المبلغ في الضمان: ${money(order.amount)}\n\n` +
+        `تراضا الطرفان / تم تحديث الحالة بنجاح، يرجى المتابعة والتنسيق.\n` +
+        `— إشعار تشغيلي تلقائي · Wasl Escrow`;
+    }
+
+    function sendWhatsAppToCoordinator(order, eventType = "deal_ready_for_execution") {
+      const message = buildCoordinatorMessage(order, eventType);
+      const entry = {
+        id: uid("WA"),
+        at: new Date().toISOString(),
+        eventType,
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+        phoneMasked: COORDINATOR_PHONE_MASK,
+        status: "mocked_ready",
+        message,
+      };
+      state.whatsapp.unshift(entry);
+      saveState();
+      toast(
+        "واتساب للمنسق · جاهز",
+        `${entry.phoneMasked}\n${eventType}\n${order.orderNumber}`,
+        "wa"
+      );
+      renderWhatsApp();
+      return entry;
+    }
+
+    /***********************
+     * Escrow calculations
+     ***********************/
+    function escrowTotals() {
+      const heldOrders = state.orders.filter((o) => o.status === "escrow");
+      const completed = state.orders.filter((o) => o.status === "completed");
+      const held = heldOrders.reduce((s, o) => s + Number(o.amount), 0);
+      const released = completed.reduce((s, o) => s + Number(o.amount), 0);
+      const revenue = completed.reduce((s, o) => s + calcFee(o.amount).fee, 0);
+      return {
+        held,
+        heldCount: heldOrders.length,
+        released,
+        completedCount: completed.length,
+        revenue,
+        negotiating: state.orders.filter((o) => o.status === "negotiating").length,
+        total: state.orders.length,
+      };
+    }
+
+    /***********************
+     * Navigation
+     ***********************/
+    const titles = {
+      home: "ربط العملاء بمقدمي الخدمات حول العالم",
+      dashboard: "لوحة التحكم التشغيلية · Live Ops & Analytics",
+      revenue: "تحليلات الإيرادات والمدفوعات العالمية",
+      settings: "إعدادات المنصة وتعدد العملات",
+      invoices: "الفواتير والإيصالات الرقمية",
+      orders: "إدارة الطلبات والضمان المالي",
+      disputes: "مركز النزاعات والتحكيم العادل",
+      providers: "كتالوج مقدمي الخدمات",
+      security: "الأمن وكشف VPN",
+      assistant: "المساعد الذكي الرسمي",
+      whatsapp: "مركز إشعارات واتساب والمنسقين",
+      brand: "هوية WASL البصرية",
+    };
+
+    function showSection(id) {
+      document.querySelectorAll(".section").forEach((s) => s.classList.remove("active"));
+      document.getElementById(`sec-${id}`)?.classList.add("active");
+      document.querySelectorAll("#mainNav button").forEach((b) => {
+        b.classList.toggle("active", b.dataset.section === id);
+      });
+      document.getElementById("topTitle").textContent = titles[id] || "WASL";
+      if (id === "orders") renderOrders();
+      if (id === "dashboard" || id === "home") renderStats();
+      if (id === "whatsapp") renderWhatsApp();
+      if (id === "providers") renderProviders();
+      if (id === "disputes") renderDisputes();
+      if (id === "revenue") renderRevenue();
+      if (id === "settings") renderSettings();
+      if (id === "invoices") renderInvoices();
+      if (id === "dashboard") startLive();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.getElementById("mainNav").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-section]");
+      if (btn) showSection(btn.dataset.section);
+    });
+    document.querySelectorAll("[data-go]").forEach((b) => {
+      b.addEventListener("click", () => showSection(b.dataset.go));
+    });
+
+    /***********************
+     * Renderers
+     ***********************/
+    function statCard(label, value, hint = "", tone = "") {
+      return `<div class="stat ${tone}"><div class="label">${label}</div><div class="value">${value}</div>${hint ? `<div class="hint">${hint}</div>` : ""}</div>`;
+    }
+
+    function dayKeys(n = 14) {
+      const keys = [];
+      const now = new Date();
+      for (let i = n - 1; i >= 0; i--) {
+        const d = new Date(now);
+        d.setHours(12, 0, 0, 0);
+        d.setDate(d.getDate() - i);
+        keys.push(d.toISOString().slice(0, 10));
+      }
+      return keys;
+    }
+
+    function buildEscrowSeries() {
+      const keys = dayKeys(14);
+      const map = Object.fromEntries(keys.map((k) => [k, { held: 0, released: 0, tx: 0 }]));
+      state.orders.forEach((o) => {
+        const k = (o.updatedAt || o.createdAt || "").slice(0, 10);
+        if (!map[k]) return;
+        map[k].tx += 1;
+        if (o.status === "escrow") map[k].held += Number(o.amount) || 0;
+        if (o.status === "completed") map[k].released += Number(o.amount) || 0;
+      });
+      // ensure visible baseline from current totals when sparse
+      const t = escrowTotals();
+      if (keys.every((k) => map[k].held === 0 && map[k].released === 0)) {
+        keys.forEach((k, i) => {
+          map[k].held = Math.round((t.held / keys.length) * (i + 1) * 100) / 100;
+          map[k].released = Math.round((t.released / keys.length) * (i + 1) * 50) / 100;
+        });
+      }
+      return keys.map((k) => ({ date: k, label: k.slice(5), ...map[k] }));
+    }
+
+    function buildSecuritySeries() {
+      const keys = dayKeys(14);
+      const map = Object.fromEntries(keys.map((k) => [k, { vpn: 0, mod: 0, total: 0 }]));
+      // derive soft signals from whatsapp + demo pattern + order activity
+      state.whatsapp.forEach((w) => {
+        const k = (w.at || "").slice(0, 10);
+        if (!map[k]) return;
+        map[k].total += 1;
+      });
+      state.orders.forEach((o, idx) => {
+        const k = (o.createdAt || "").slice(0, 10);
+        if (!map[k]) return;
+        if (idx % 3 === 0) map[k].vpn += 1;
+        if (idx % 4 === 0) map[k].mod += 1;
+        map[k].total += 1;
+      });
+      // demo pulse so charts never look empty
+      keys.forEach((k, i) => {
+        if (map[k].total === 0) {
+          map[k].vpn = i % 5 === 0 ? 1 : 0;
+          map[k].mod = i % 7 === 0 ? 1 : 0;
+          map[k].total = map[k].vpn + map[k].mod;
+        }
+      });
+      return keys.map((k) => ({ date: k, label: k.slice(5), ...map[k] }));
+    }
+
+    function renderEscrowChart(series) {
+      const w = 640, h = 200, pad = 16;
+      const maxY = Math.max(1, ...series.flatMap((s) => [s.held, s.released]));
+      const n = Math.max(series.length - 1, 1);
+      const line = (key) => series.map((s, i) => {
+        const x = pad + (i / n) * (w - pad * 2);
+        const y = h - pad - (s[key] / maxY) * (h - pad * 2);
+        return `${x},${y}`;
+      }).join(" ");
+      const area = (key) => {
+        const pts = series.map((s, i) => {
+          const x = pad + (i / n) * (w - pad * 2);
+          const y = h - pad - (s[key] / maxY) * (h - pad * 2);
+          return `${x},${y}`;
+        });
+        return `${pad},${h - pad} ${pts.join(" ")} ${pad + (w - pad * 2)},${h - pad}`;
+      };
+      const labels = series.map((s, i) => {
+        if (i % Math.ceil(series.length / 6) !== 0 && i !== series.length - 1) return "";
+        const x = pad + (i / n) * (w - pad * 2);
+        return `<text x="${x}" y="${h - 2}" text-anchor="middle" font-size="10" fill="#64748b">${s.label}</text>`;
+      }).join("");
+      document.getElementById("escrowChart").innerHTML = `
+        <svg class="chart-svg" viewBox="0 0 ${w} ${h}" role="img">
+          <defs>
+            <linearGradient id="hFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#22d3ee" stop-opacity=".35"/>
+              <stop offset="100%" stop-color="#22d3ee" stop-opacity=".02"/>
+            </linearGradient>
+            <linearGradient id="rFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#fb923c" stop-opacity=".3"/>
+              <stop offset="100%" stop-color="#fb923c" stop-opacity=".02"/>
+            </linearGradient>
+          </defs>
+          <polygon points="${area("held")}" fill="url(#hFill)"/>
+          <polygon points="${area("released")}" fill="url(#rFill)"/>
+          <polyline points="${line("held")}" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-linejoin="round"/>
+          <polyline points="${line("released")}" fill="none" stroke="#fb923c" stroke-width="2.5" stroke-linejoin="round"/>
+          ${labels}
+        </svg>`;
+      const tx = series.reduce((s, d) => s + d.tx, 0);
+      document.getElementById("escrowTxMini").innerHTML = `
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap;font-size:.75rem;color:var(--muted)">
+          <span>المعاملات الظاهرة: <strong style="color:var(--text)">${tx}</strong></span>
+          <span>المجمّد الحالي: <strong style="color:#67e8f9">${money(escrowTotals().held)}</strong></span>
+          <span>المُفرَج: <strong style="color:#fdba74">${money(escrowTotals().released)}</strong></span>
+        </div>`;
+    }
+
+    function renderSecurityChart(series) {
+      const maxY = Math.max(1, ...series.map((s) => s.total || s.vpn + s.mod));
+      document.getElementById("securityChart").innerHTML = `
+        <div class="bar-row">${series.map((s) => {
+          const h = Math.max(8, ((s.total || (s.vpn + s.mod)) / maxY) * 100);
+          const vpnPct = s.total ? (s.vpn / s.total) * 100 : (s.vpn ? 100 : 0);
+          const modPct = s.total ? (s.mod / s.total) * 100 : (s.mod ? 60 : 0);
+          return `<div class="bar-col" title="${s.label}: VPN ${s.vpn} · Mod ${s.mod}">
+            <div class="bar-stack" style="height:${h}%">
+              <div class="bar-vpn" style="height:${Math.max(vpnPct, s.vpn?20:0)}%"></div>
+              <div class="bar-mod" style="height:${Math.max(modPct * 0.7, s.mod?15:0)}%"></div>
+            </div>
+            <span class="bar-lbl">${s.label}</span>
+          </div>`;
+        }).join("")}</div>`;
+
+      const vpn = series.reduce((a, s) => a + s.vpn, 0);
+      const mod = series.reduce((a, s) => a + s.mod, 0);
+      const total = Math.max(1, series.reduce((a, s) => a + s.total, 0));
+      const blockRate = Math.round((vpn / total) * 1000) / 10;
+      document.getElementById("secOpenBadge").textContent = `${vpn + mod} إشارة`;
+      document.getElementById("secMiniStats").innerHTML = [
+        statCard("VPN", vpn, `معدل ${blockRate}%`, ""),
+        statCard("Moderation", mod, "محتوى", "amber"),
+        statCard("Block rate", blockRate + "%", "نافذة 14 يوم", "warn"),
+        statCard("WhatsApp", state.whatsapp.length, "إشعارات", "ok"),
+      ].join("");
+    }
+
+    function renderAuditLogs() {
+      const audits = [];
+      state.orders.slice(0, 8).forEach((o) => {
+        audits.push({
+          severity: o.status === "escrow" ? "info" : o.status === "completed" ? "low" : "medium",
+          title: `طلب ${o.orderNumber}`,
+          body: `${STATUS[o.status].label} · ${o.client} ↔ ${o.provider} · ${money(o.amount)}`,
+          at: o.updatedAt,
+          tag: "order",
+        });
+      });
+      state.whatsapp.slice(0, 6).forEach((w) => {
+        audits.push({
+          severity: "info",
+          title: `واتساب · ${w.eventType}`,
+          body: `${w.orderNumber || ""} · ${w.phoneMasked} · ${w.status}`,
+          at: w.at,
+          tag: "whatsapp",
+        });
+      });
+      // synthetic security samples tied to activity
+      if (state.orders.length) {
+        audits.push({
+          severity: "high",
+          title: "vpn_detected",
+          body: "محاولة وصول عبر VPN — request_rejected",
+          at: new Date().toISOString(),
+          tag: "security",
+        });
+        audits.push({
+          severity: "medium",
+          title: "banned_word",
+          body: "فحص محتوى: لا مخالفة في آخر طلب",
+          at: new Date().toISOString(),
+          tag: "security",
+        });
+      }
+      audits.sort((a, b) => new Date(b.at) - new Date(a.at));
+      const sevBadge = {
+        info: "badge-escrow",
+        low: "badge-completed",
+        medium: "badge-negotiating",
+        high: "badge-cancelled",
+        critical: "badge-cancelled",
+      };
+      document.getElementById("dashAuditLogs").innerHTML = audits.length
+        ? audits.slice(0, 12).map((a) => `
+          <div class="wa-item">
+            <div style="display:flex;flex-wrap:wrap;gap:.4rem;align-items:center">
+              <span class="badge ${sevBadge[a.severity] || "badge-neutral"}">${a.severity}</span>
+              <strong style="font-size:.82rem">${escapeHtml(a.title)}</strong>
+              <span class="badge badge-neutral">${a.tag}</span>
+              <span style="font-size:.7rem;color:var(--muted)">${new Intl.DateTimeFormat("ar-SA",{dateStyle:"short",timeStyle:"short"}).format(new Date(a.at))}</span>
+            </div>
+            <div style="font-size:.78rem;color:var(--muted);margin-top:.3rem">${escapeHtml(a.body)}</div>
+          </div>`).join("")
+        : `<div class="empty">لا سجلات تدقيق بعد</div>`;
+    }
+
+    let liveEnabled = true;
+    let liveTimer = null;
+
+    function renderStats() {
+      const t = escrowTotals();
+      const html = [
+        statCard("الطلبات", t.total, `${t.negotiating} تفاوض`, ""),
+        statCard("في الضمان", money(t.held), `${t.heldCount} عملية`, "amber"),
+        statCard("مكتملة", t.completedCount, `محرّر ${money(t.released)}`, "ok"),
+        statCard("إيراد الرسوم", money(t.revenue), `${FEE_PERCENT}%`, "warn"),
+      ].join("");
+      document.getElementById("homeStats").innerHTML = html;
+      document.getElementById("dashStats").innerHTML = html;
+      document.getElementById("escrowStats").innerHTML = [
+        statCard("أموال مجمّدة (Escrow)", money(t.held), "تُحدَّث مع كل تغيير حالة/مبلغ", "amber"),
+        statCard("طلبات في الضمان", t.heldCount, "بانتظار التنفيذ/التراضي", ""),
+        statCard("قيد التفاوض", t.negotiating, "لم يُجمَّد المبلغ بعد", "warn"),
+        statCard("واتساب مرسل", state.whatsapp.length, "إشعارات المنسق", "ok"),
+      ].join("");
+
+      const secSeries = buildSecuritySeries();
+      const vpn = secSeries.reduce((a, s) => a + s.vpn, 0);
+      const mod = secSeries.reduce((a, s) => a + s.mod, 0);
+      const blockRate = Math.round((vpn / Math.max(1, vpn + mod + t.total)) * 1000) / 10;
+      document.getElementById("dashKpis").innerHTML = [
+        statCard("Escrow Volume", money(t.held), "أموال مجمّدة حاليًا", "amber"),
+        statCard("Transactions", t.total, `${t.heldCount} في الضمان`, ""),
+        statCard("VPN Block rate", blockRate + "%", `${vpn} إشارة VPN`, "warn"),
+        statCard("Moderation alerts", mod, "محتوى / سياسة", "ok"),
+      ].join("");
+
+      renderEscrowChart(buildEscrowSeries());
+      renderSecurityChart(secSeries);
+      renderAuditLogs();
+
+      document.getElementById("liveStamp").textContent =
+        `آخر تحديث: ${nowLabel()} · البث ${liveEnabled ? "نشط (15ث)" : "متوقف"}`;
+
+      const recent = [...state.orders]
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+        .slice(0, 8);
+      document.getElementById("dashRecentOrders").innerHTML = recent.length
+        ? `<div class="table-wrap"><table><thead><tr><th>الرقم</th><th>العنوان</th><th>الحالة</th><th>المبلغ</th><th>تحديث</th></tr></thead><tbody>${
+            recent.map((o) => `<tr>
+              <td style="font-family:monospace;font-size:.72rem">${o.orderNumber}</td>
+              <td>${escapeHtml(o.title)}</td>
+              <td><span class="badge ${STATUS[o.status].badge}">${STATUS[o.status].label}</span></td>
+              <td>${money(o.amount)}</td>
+              <td style="font-size:.72rem;color:var(--muted)">${new Intl.DateTimeFormat("ar-SA",{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(o.updatedAt))}</td>
+            </tr>`).join("")
+          }</tbody></table></div>`
+        : `<div class="empty">لا طلبات بعد</div>`;
+
+      const counts = Object.keys(STATUS).map((k) => {
+        const c = state.orders.filter((o) => o.status === k).length;
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:.55rem 0;border-bottom:1px solid rgba(148,163,184,.08)">
+          <span class="badge ${STATUS[k].badge}">${STATUS[k].label}</span>
+          <strong>${c}</strong>
+        </div>`;
+      }).join("");
+      document.getElementById("dashStatusBreakdown").innerHTML = counts;
+    }
+
+    function startLive() {
+      stopLive();
+      if (!liveEnabled) return;
+      liveTimer = setInterval(() => {
+        renderStats();
+      }, 15000);
+    }
+    function stopLive() {
+      if (liveTimer) clearInterval(liveTimer);
+      liveTimer = null;
+    }
+
+    document.getElementById("btnToggleLive")?.addEventListener("click", () => {
+      liveEnabled = !liveEnabled;
+      const btn = document.getElementById("btnToggleLive");
+      btn.textContent = liveEnabled ? "⏸ إيقاف البث الحي" : "▶ تشغيل البث الحي";
+      document.getElementById("liveDot").style.animation = liveEnabled ? "pulse 1.4s infinite" : "none";
+      if (liveEnabled) startLive(); else stopLive();
+      renderStats();
+      toast(liveEnabled ? "البث الحي يعمل" : "تم إيقاف البث", liveEnabled ? "تحديث كل 15 ثانية" : "");
+    });
+    document.getElementById("btnRefreshLive")?.addEventListener("click", () => {
+      renderStats();
+      toast("تم التحديث", nowLabel());
+    });
+
+    /***********************
+     * Live Portal Switcher
+     ***********************/
+    let currentPortal = "client";
+    try {
+      const savedPortal = localStorage.getItem("wasl_portal_role");
+      if (savedPortal) currentPortal = savedPortal;
+    } catch {}
+
+    function setPortal(role) {
+      currentPortal = role;
+      try { localStorage.setItem("wasl_portal_role", role); } catch {}
+      document.querySelectorAll("#portalTabs .portal-tab").forEach((b) => {
+        b.classList.toggle("active", b.dataset.portal === role);
+      });
+      document.getElementById("portalPanelClient").style.display = role === "client" ? "block" : "none";
+      document.getElementById("portalPanelProvider").style.display = role === "provider" ? "block" : "none";
+      document.getElementById("portalPanelSecurity").style.display = role === "security" ? "block" : "none";
+      const meta = {
+        client: { badge: "Client Portal", title: "👤 رؤية العميل", hint: "إنشاء طلبات وتجميد الضمان ينعكس على الرسوم فورًا" },
+        provider: { badge: "Provider Portal", title: "🛠️ رؤية المقدم", hint: "تعديل الملف والمعرض يظهر فورًا في الدليل والإحصاءات" },
+        security: { badge: "Security Admin", title: "🛡️ المشرف الأمني", hint: "VPN والمحتوى يغذيان Audit Logs والرسوم الأمنية" },
+      }[role];
+      document.getElementById("portalBadge").textContent = meta.badge;
+      document.getElementById("portalFocusTitle").textContent = meta.title;
+      document.getElementById("portalFocusHint").textContent = meta.hint;
+      const t = escrowTotals();
+      document.getElementById("portalEscrowMini").textContent = money(t.held);
+      document.getElementById("portalProvMini").textContent = String(state.providers.length);
+      document.getElementById("portalSecMini").textContent = String((state.whatsapp?.length || 0) + t.total);
+      fillPortalSelects();
+    }
+
+    function fillPortalSelects() {
+      const op = document.getElementById("simOrderProvider");
+      const ps = document.getElementById("simProviderSelect");
+      if (op) {
+        op.innerHTML = state.providers.map((p) =>
+          `<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)}</option>`
+        ).join("");
+      }
+      if (ps) {
+        ps.innerHTML = state.providers.map((p) =>
+          `<option value="${p.id}">${escapeHtml(p.name)}</option>`
+        ).join("");
+        if (ps.value) syncSimProviderFields(ps.value);
+      }
+    }
+
+    function syncSimProviderFields(id) {
+      const p = state.providers.find((x) => x.id === id);
+      if (!p) return;
+      document.getElementById("simHeadline").value = p.headline || "";
+      document.getElementById("simSkills").value = (p.skills || []).join(", ");
+      document.getElementById("simSector").value = p.sector || "تقنية";
+      document.getElementById("simAvailability").value = p.availability || "available";
+      document.getElementById("simRate").value = p.rate || 40;
+    }
+
+    document.getElementById("portalTabs")?.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-portal]");
+      if (!btn) return;
+      setPortal(btn.dataset.portal);
+    });
+
+    document.getElementById("simProviderSelect")?.addEventListener("change", (e) => {
+      syncSimProviderFields(e.target.value);
+    });
+
+    document.getElementById("btnSimClient")?.addEventListener("click", () => {
+      const providerName = document.getElementById("simOrderProvider").value || state.providers[0]?.name || "مقدم";
+      const clientName = state.clients[0] || "عميل محاكاة";
+      const amount = Number(document.getElementById("simOrderAmount").value) || 500;
+      const fund = document.getElementById("simFundEscrow").checked;
+      const order = {
+        id: "o_" + Math.random().toString(36).slice(2, 8),
+        orderNumber: uid(),
+        title: document.getElementById("simOrderTitle").value.trim() || `طلب محاكاة عميل · ${nowLabel()}`,
+        client: clientName,
+        provider: providerName,
+        description: "أُنشئ عبر Portal Switcher (رؤية العميل)",
+        amount,
+        days: 7,
+        status: fund ? "escrow" : "negotiating",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      state.orders.unshift(order);
+      saveState();
+      if (fund) sendWhatsAppToCoordinator(order, "escrow_funded");
+      renderStats();
+      renderOrders();
+      setPortal("client");
+      document.getElementById("portalMsg").textContent =
+        `✓ ${order.orderNumber} · ${fund ? "مجمّد في Escrow" : "تفاوض"} · ${money(amount)} — تم تحديث العدادات والرسوم`;
+      toast("محاكاة عميل", order.orderNumber);
+    });
+
+    document.getElementById("btnSimProvider")?.addEventListener("click", () => {
+      const id = document.getElementById("simProviderSelect").value;
+      const p = state.providers.find((x) => x.id === id) || state.providers[0];
+      if (!p) return toast("لا مقدم", "", "err");
+      p.headline = document.getElementById("simHeadline").value.trim() || p.headline;
+      p.skills = document.getElementById("simSkills").value.split(",").map((s) => s.trim()).filter(Boolean);
+      p.sector = document.getElementById("simSector").value;
+      p.availability = document.getElementById("simAvailability").value;
+      p.rate = Number(document.getElementById("simRate").value) || p.rate;
+      p.portfolio = p.portfolio || [];
+      p.portfolio.unshift({
+        id: uid("pf"),
+        title: `عمل محاكاة · ${nowLabel()}`,
+        description: "من بوابة مقدم الخدمة",
+        tags: ["portal-switcher", p.sector],
+        url: "",
+      });
+      saveState();
+      selectedProviderId = p.id;
+      renderProviders();
+      renderStats();
+      setPortal("provider");
+      document.getElementById("portalMsg").textContent =
+        `✓ تحديث ${p.name} + عنصر معرض — الدليل والإحصاءات تحدّثت`;
+      toast("محاكاة مقدم", p.name);
+    });
+
+    document.getElementById("btnSimVpn")?.addEventListener("click", () => {
+      const ip = document.getElementById("simIp").value.trim() || "203.0.113.99";
+      const threat = DEMO_THREAT_IPS[ip];
+      const blocked = !!(threat && (threat.isVpn || threat.isProxy || threat.isTor || threat.isDatacenter));
+      // push audit-like signal into whatsapp/security trail via orders touch
+      state.whatsapp.unshift({
+        id: uid("WA"),
+        at: new Date().toISOString(),
+        eventType: blocked ? "vpn_detected" : "login_success",
+        orderId: null,
+        orderNumber: "SEC",
+        phoneMasked: COORDINATOR_PHONE_MASK,
+        status: blocked ? "blocked" : "ok",
+        message: blocked
+          ? `⛔ VPN/Proxy blocked · IP ${ip}`
+          : `✅ Clean IP · ${ip}`,
+      });
+      saveState();
+      renderStats();
+      renderWhatsApp();
+      setPortal("security");
+      document.getElementById("portalMsg").textContent = blocked
+        ? `⛔ حُظر ${ip} — أُضيف لسجل التدقيق والرسم الأمني`
+        : `✅ ${ip} نظيف`;
+      toast(blocked ? "VPN محظور" : "IP نظيف", ip, blocked ? "err" : "");
+    });
+
+    document.getElementById("btnSimCleanIp")?.addEventListener("click", () => {
+      document.getElementById("simIp").value = "8.8.8.8";
+      document.getElementById("btnSimVpn").click();
+    });
+
+    document.getElementById("btnSimMod")?.addEventListener("click", () => {
+      const text = document.getElementById("simModText").value || "";
+      const hits = BANNED.filter((w) => text.toLowerCase().includes(w.toLowerCase()));
+      state.whatsapp.unshift({
+        id: uid("WA"),
+        at: new Date().toISOString(),
+        eventType: hits.length ? "banned_word" : "policy_ok",
+        orderId: null,
+        orderNumber: "MOD",
+        phoneMasked: COORDINATOR_PHONE_MASK,
+        status: hits.length ? "blocked" : "ok",
+        message: hits.length
+          ? `⛔ محتوى محظور: ${hits.join(", ")}`
+          : "✅ محتوى نظيف",
+      });
+      saveState();
+      renderStats();
+      setPortal("security");
+      document.getElementById("portalMsg").textContent = hits.length
+        ? `⛔ تصفية: ${hits.join(" · ")} — انعكس على Moderation chart`
+        : "المحتوى نظيف";
+      toast(hits.length ? "محتوى محظور" : "محتوى نظيف", hits.join(", ") || "OK", hits.length ? "err" : "");
+    });
+
+    // init portal UI after DOM functions ready
+    setTimeout(() => setPortal(currentPortal), 0);
+
+    function orderTimeline(status) {
+      const steps = ["negotiating", "escrow", "completed"];
+      const idx = steps.indexOf(status);
+      return `<div class="timeline">${steps.map((s, i) => {
+        let cls = "step";
+        if (status === "cancelled") cls += "";
+        else if (i < idx) cls += " done";
+        else if (i === idx) cls += " on";
+        return `<span class="${cls}">${STATUS[s].label}</span>`;
+      }).join("")}</div>`;
+    }
+
+    function renderOrders() {
+      renderStats();
+      fillDatalists();
+
+      const q = (document.getElementById("filterQ").value || "").trim().toLowerCase();
+      const st = document.getElementById("filterStatus").value;
+      let rows = [...state.orders].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+      if (st !== "all") rows = rows.filter((o) => o.status === st);
+      if (q) {
+        rows = rows.filter((o) =>
+          [o.title, o.client, o.provider, o.orderNumber, o.description].join(" ").toLowerCase().includes(q)
+        );
+      }
+
+      const root = document.getElementById("ordersList");
+      if (!rows.length) {
+        root.innerHTML = `<div class="empty">لا توجد طلبات مطابقة — أضف طلبًا من النموذج</div>`;
+        return;
+      }
+
+      root.innerHTML = rows.map((o) => {
+        const { fee, net } = calcFee(o.amount);
+        const canNegotiate = o.status !== "negotiating" && o.status !== "cancelled";
+        const canEscrow = o.status === "negotiating";
+        const canComplete = o.status === "escrow";
+        return `<article class="order-item" data-id="${o.id}">
+          <div class="order-top">
+            <div>
+              <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+                <span style="font-family:monospace;font-size:.72rem;color:var(--muted)">${o.orderNumber}</span>
+                <span class="badge ${STATUS[o.status].badge}">${STATUS[o.status].label}</span>
+              </div>
+              <h4 style="margin:.35rem 0 .2rem;font-size:1.05rem">${escapeHtml(o.title)}</h4>
+              <p style="color:var(--muted);font-size:.84rem">${escapeHtml(o.description || "—")}</p>
+              <div class="order-meta">
+                <span>👤 ${escapeHtml(o.client)}</span>
+                <span>🛠️ ${escapeHtml(o.provider)}</span>
+                <span>⏱️ ${o.days} يوم</span>
+                <span>🕒 ${new Intl.DateTimeFormat("ar-SA",{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(o.updatedAt))}</span>
+              </div>
+              ${orderTimeline(o.status)}
+            </div>
+            <div class="order-amount">
+              <div class="money">${money(o.amount)}</div>
+              <div class="sub">رسوم المنصة: ${money(fee)}</div>
+              <div class="sub">صافي المقدم: ${money(net)}</div>
+            </div>
+          </div>
+          <div class="order-actions">
+            ${canEscrow ? `<button class="btn btn-primary btn-sm" data-act="escrow" data-id="${o.id}">تجميد في الضمان</button>` : ""}
+            ${canComplete ? `<button class="btn btn-success btn-sm" data-act="complete" data-id="${o.id}">تأكيد التراضي / إكمال</button>` : ""}
+            ${canNegotiate && o.status !== "completed" ? `<button class="btn btn-ghost btn-sm" data-act="negotiate" data-id="${o.id}">إعادة للتفاوض</button>` : ""}
+            <button class="btn btn-ghost btn-sm" data-act="amount" data-id="${o.id}">تحديث المبلغ</button>
+            <button class="btn btn-amber btn-sm" data-act="wa" data-id="${o.id}">واتساب للمنسق</button>
+            <button class="btn btn-ghost btn-sm" data-act="edit" data-id="${o.id}">تعديل</button>
+            <button class="btn btn-danger btn-sm" data-act="cancel" data-id="${o.id}">إلغاء</button>
+          </div>
+        </article>`;
+      }).join("");
+    }
+
+    function fillDatalists() {
+      document.getElementById("clientsList").innerHTML = state.clients
+        .map((c) => `<option value="${escapeHtml(c)}"></option>`).join("");
+      document.getElementById("providersList").innerHTML = state.providers
+        .map((p) => `<option value="${escapeHtml(p.name)}"></option>`).join("");
+      const pf = document.getElementById("pfProvider");
+      if (pf) {
+        pf.innerHTML = state.providers
+          .map((p) => `<option value="${p.id}">${escapeHtml(p.name)} — ${escapeHtml(p.sector || "")}</option>`)
+          .join("");
+      }
+    }
+
+    let selectedProviderId = null;
+
+    function providerAvailabilityLabel(v) {
+      return ({ available: "متاح", busy: "مشغول", away: "بعيد", offline: "غير متصل" })[v] || v || "—";
+    }
+
+    function renderProviders() {
+      fillDatalists();
+      const q = (document.getElementById("providerFilter")?.value || "").trim().toLowerCase();
+      let list = [...state.providers];
+      if (q) {
+        list = list.filter((p) =>
+          [p.name, p.headline, p.bio, p.sector, ...(p.skills || [])].join(" ").toLowerCase().includes(q)
+        );
+      }
+
+      const available = state.providers.filter((p) => p.availability === "available").length;
+      const portfolioCount = state.providers.reduce((s, p) => s + ((p.portfolio || []).length), 0);
+      const statsEl = document.getElementById("providerStats");
+      if (statsEl) {
+        statsEl.innerHTML = [
+          statCard("الملفات", state.providers.length, "provider_profiles", ""),
+          statCard("متاحون", available, "الآن", "ok"),
+          statCard("أعمال المعرض", portfolioCount, "portfolio", "amber"),
+          statCard("متوسط التقييم", (
+            state.providers.reduce((s, p) => s + (Number(p.rating) || 0), 0) /
+            Math.max(1, state.providers.length)
+          ).toFixed(2), "من 5", "warn"),
+        ].join("");
+      }
+
+      const grid = document.getElementById("providersGrid");
+      if (!list.length) {
+        grid.innerHTML = `<div class="empty">لا نتائج — أنشئ ملفًا من النموذج</div>`;
+        renderPortfolioGallery(null);
+        return;
+      }
+
+      grid.innerHTML = list.map((p) => `
+        <div class="order-item" style="${selectedProviderId === p.id ? "border-color:rgba(34,211,238,.45)" : ""}">
+          <div class="order-top">
+            <div>
+              <div style="display:flex;gap:.45rem;flex-wrap:wrap;align-items:center">
+                <h4 style="margin:0;font-size:1.05rem">${escapeHtml(p.name)}</h4>
+                <span class="badge badge-escrow">${escapeHtml(p.sector || "قطاع")}</span>
+                <span class="badge ${p.availability === "available" ? "badge-completed" : "badge-negotiating"}">${providerAvailabilityLabel(p.availability)}</span>
+              </div>
+              <p style="margin:.35rem 0 0;color:#cbd5e1;font-size:.9rem">${escapeHtml(p.headline || "")}</p>
+              <p style="margin:.35rem 0 0;color:var(--muted);font-size:.82rem">${escapeHtml(p.bio || "")}</p>
+              <div style="display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.55rem">
+                ${(p.skills || []).map((s) => `<span class="chip cyan" style="border-radius:8px">${escapeHtml(s)}</span>`).join("")}
+              </div>
+              <div class="order-meta">
+                <span>⭐ ${p.rating ?? "—"}</span>
+                <span>${money(p.rate || 0)} / ساعة</span>
+                <span>خبرة ${p.years ?? 0} سنة</span>
+                <span>معرض ${(p.portfolio || []).length}</span>
+              </div>
+            </div>
+          </div>
+          <div class="order-actions">
+            <button class="btn btn-primary btn-sm" data-pact="view" data-id="${p.id}">المعرض</button>
+            <button class="btn btn-ghost btn-sm" data-pact="edit" data-id="${p.id}">تعديل الملف</button>
+            <button class="btn btn-danger btn-sm" data-pact="delete" data-id="${p.id}">حذف</button>
+          </div>
+        </div>
+      `).join("");
+
+      if (selectedProviderId) {
+        const sel = state.providers.find((p) => p.id === selectedProviderId);
+        renderPortfolioGallery(sel || null);
+      } else if (list[0]) {
+        renderPortfolioGallery(list[0]);
+      }
+    }
+
+    function renderPortfolioGallery(provider) {
+      const el = document.getElementById("portfolioGallery");
+      if (!el) return;
+      if (!provider) {
+        el.innerHTML = `<div class="empty">اختر مقدم خدمة لعرض المعرض</div>`;
+        return;
+      }
+      selectedProviderId = provider.id;
+      const items = provider.portfolio || [];
+      if (!items.length) {
+        el.innerHTML = `<div class="empty">معرض ${escapeHtml(provider.name)} فارغ — أضف عملاً من النموذج</div>`;
+        return;
+      }
+      el.innerHTML = items.map((item) => `
+        <div class="card flat" style="padding:0;overflow:hidden">
+          <div style="height:110px;display:grid;place-items:center;background:linear-gradient(135deg,#020b1c,#0d1b2a);color:#67e8f9;font-size:.75rem;letter-spacing:.12em">
+            ${item.url ? `<a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer" style="color:#67e8f9">فتح الرابط</a>` : "WASL PORTFOLIO"}
+          </div>
+          <div style="padding:.85rem">
+            <div style="display:flex;justify-content:space-between;gap:.4rem">
+              <strong>${escapeHtml(item.title)}</strong>
+              <button class="btn btn-danger btn-sm" data-pact="del-pf" data-pid="${provider.id}" data-fid="${item.id}">حذف</button>
+            </div>
+            <p style="color:var(--muted);font-size:.8rem;margin-top:.35rem">${escapeHtml(item.description || "—")}</p>
+            <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.45rem">
+              ${(item.tags || []).map((t) => `<span class="badge badge-neutral">${escapeHtml(t)}</span>`).join("")}
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    document.getElementById("providersGrid")?.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-pact]");
+      if (!btn) return;
+      const id = btn.dataset.id;
+      const act = btn.dataset.pact;
+      if (act === "view") {
+        const p = state.providers.find((x) => x.id === id);
+        renderPortfolioGallery(p);
+        renderProviders();
+      }
+      if (act === "edit") {
+        const p = state.providers.find((x) => x.id === id);
+        if (!p) return;
+        document.getElementById("providerFormTitle").textContent = "تعديل ملف مقدم / حرفي";
+        document.getElementById("pEditId").value = p.id;
+        document.getElementById("pName").value = p.name || "";
+        document.getElementById("pHeadline").value = p.headline || "";
+        document.getElementById("pBio").value = p.bio || "";
+        document.getElementById("pSkills").value = (p.skills || []).join(", ");
+        document.getElementById("pSector").value = p.sector || "تقنية";
+        document.getElementById("pAvailability").value = p.availability || "available";
+        document.getElementById("pYears").value = p.years ?? 0;
+        document.getElementById("pRate").value = p.rate ?? 0;
+        document.getElementById("pPortfolioUrl").value = p.portfolio?.[0]?.url || "";
+        selectedProviderId = p.id;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      if (act === "delete") {
+        if (!confirm("حذف ملف مقدم الخدمة؟")) return;
+        state.providers = state.providers.filter((p) => p.id !== id);
+        if (selectedProviderId === id) selectedProviderId = null;
+        saveState();
+        renderProviders();
+        toast("تم الحذف", "أُزيل الملف من الدليل المحلي");
+      }
+      if (act === "del-pf") {
+        const pid = btn.dataset.pid;
+        const fid = btn.dataset.fid;
+        const p = state.providers.find((x) => x.id === pid);
+        if (!p) return;
+        p.portfolio = (p.portfolio || []).filter((i) => i.id !== fid);
+        saveState();
+        renderProviders();
+        renderPortfolioGallery(p);
+        toast("حُذف من المعرض", fid);
+      }
+    });
+
+    document.getElementById("providerFilter")?.addEventListener("input", renderProviders);
+
+    document.getElementById("providerForm")?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const editId = document.getElementById("pEditId").value;
+      const payload = {
+        name: document.getElementById("pName").value.trim(),
+        headline: document.getElementById("pHeadline").value.trim(),
+        bio: document.getElementById("pBio").value.trim(),
+        skills: document.getElementById("pSkills").value.split(",").map((s) => s.trim()).filter(Boolean),
+        sector: document.getElementById("pSector").value,
+        availability: document.getElementById("pAvailability").value,
+        years: Number(document.getElementById("pYears").value) || 0,
+        rate: Number(document.getElementById("pRate").value) || 0,
+        rating: 4.5,
+      };
+      const portfolioUrl = document.getElementById("pPortfolioUrl").value.trim();
+      if (editId) {
+        const p = state.providers.find((x) => x.id === editId);
+        if (!p) return;
+        Object.assign(p, payload);
+        if (portfolioUrl) {
+          p.portfolio = p.portfolio || [];
+          if (!p.portfolio.some((i) => i.url === portfolioUrl)) {
+            p.portfolio.unshift({ id: uid("pf"), title: "رابط معرض", description: "", url: portfolioUrl, tags: [p.sector] });
+          }
+        }
+        toast("تم تحديث الملف", p.name);
+      } else {
+        const p = {
+          id: "pr_" + Math.random().toString(36).slice(2, 8),
+          ...payload,
+          portfolio: portfolioUrl
+            ? [{ id: uid("pf"), title: "رابط معرض", description: "", url: portfolioUrl, tags: [payload.sector] }]
+            : [],
+        };
+        state.providers.unshift(p);
+        toast("تم إنشاء الملف", p.name);
+      }
+      saveState();
+      document.getElementById("providerForm").reset();
+      document.getElementById("pEditId").value = "";
+      document.getElementById("providerFormTitle").textContent = "ملف مقدم / حرفي";
+      document.getElementById("pYears").value = "3";
+      document.getElementById("pRate").value = "40";
+      renderProviders();
+    });
+
+    document.getElementById("btnCancelProvider")?.addEventListener("click", () => {
+      document.getElementById("providerForm").reset();
+      document.getElementById("pEditId").value = "";
+      document.getElementById("providerFormTitle").textContent = "ملف مقدم / حرفي";
+    });
+    document.getElementById("btnNewProvider")?.addEventListener("click", () => {
+      document.getElementById("btnCancelProvider").click();
+      document.getElementById("pName").focus();
+    });
+
+    document.getElementById("portfolioForm")?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const pid = document.getElementById("pfProvider").value;
+      const p = state.providers.find((x) => x.id === pid);
+      if (!p) return toast("اختر مقدم خدمة", "", "err");
+      const item = {
+        id: uid("pf"),
+        title: document.getElementById("pfTitle").value.trim(),
+        description: document.getElementById("pfDesc").value.trim(),
+        url: document.getElementById("pfUrl").value.trim(),
+        tags: document.getElementById("pfTags").value.split(",").map((t) => t.trim()).filter(Boolean),
+      };
+      p.portfolio = p.portfolio || [];
+      p.portfolio.unshift(item);
+      saveState();
+      document.getElementById("portfolioForm").reset();
+      document.getElementById("pfProvider").value = pid;
+      selectedProviderId = pid;
+      renderProviders();
+      renderPortfolioGallery(p);
+      toast("أُضيف للمعرض", item.title);
+    });
+
+    function renderWhatsApp() {
+      if (!Array.isArray(state.whatsapp)) state.whatsapp = [];
+      const total = state.whatsapp.length;
+      const sent = state.whatsapp.filter((w) => w.status === "sent" || w.status === "mocked" || w.status === "mocked_ready").length;
+      const skipped = state.whatsapp.filter((w) => w.status === "skipped").length;
+      const failed = state.whatsapp.filter((w) => w.status === "failed" || w.status === "blocked").length;
+      const el = (id) => document.getElementById(id);
+      if (el("waTotal")) el("waTotal").textContent = String(total);
+      if (el("waSent")) el("waSent").textContent = String(sent);
+      if (el("waSkipped")) el("waSkipped").textContent = String(skipped);
+      if (el("waFailed")) el("waFailed").textContent = String(failed);
+
+      const waOn = platformSettings?.whatsappEnabled !== false;
+      if (el("waEnabledChip")) el("waEnabledChip").textContent = waOn ? "مفعّل من الإعدادات" : "متوقف من الإعدادات";
+      if (el("waConnChip")) el("waConnChip").textContent = "الاتصال: Mock · Audit ON";
+      if (el("waCoordChip")) el("waCoordChip").textContent = "منسق " + (typeof COORDINATOR_PHONE_MASK !== "undefined" ? COORDINATOR_PHONE_MASK : "+966******000");
+
+      const sel = el("waOrderSelect");
+      if (sel) {
+        sel.innerHTML = `<option value="">اختبار عام</option>` + state.orders.map((o) =>
+          `<option value="${o.id}">${escapeHtml(o.orderNumber)} — ${escapeHtml(o.title)}</option>`
+        ).join("");
+      }
+
+      const filter = el("waFilter")?.value || "all";
+      let rows = [...state.whatsapp];
+      if (filter !== "all") {
+        rows = rows.filter((w) => String(w.status).includes(filter) || w.status === filter);
+      }
+      const log = el("waLog");
+      if (!log) return;
+      if (!rows.length) {
+        log.innerHTML = `<div class="empty">لا إرسالات — نفّذ اختبارًا أو تمويل ضمان</div>`;
+        return;
+      }
+      log.innerHTML = rows.map((w) => `
+        <div class="wa-item">
+          <div style="display:flex;flex-wrap:wrap;gap:.45rem;align-items:center">
+            <span class="badge badge-escrow">${escapeHtml(w.status)}</span>
+            <strong style="font-size:.82rem">${escapeHtml(w.eventType)}</strong>
+            <span style="font-size:.72rem;color:var(--muted);font-family:monospace">${escapeHtml(w.orderNumber || "")}</span>
+            <span style="font-size:.72rem;color:var(--muted)">${escapeHtml(w.phoneMasked || "")}</span>
+            <span style="font-size:.72rem;color:var(--muted)">${new Intl.DateTimeFormat("ar-SA",{dateStyle:"short",timeStyle:"short"}).format(new Date(w.at || Date.now()))}</span>
+          </div>
+          <pre>${escapeHtml(w.message || "")}</pre>
+        </div>
+      `).join("");
+    }
+
+    document.getElementById("waFilter")?.addEventListener("change", renderWhatsApp);
+    document.getElementById("btnProbeWa")?.addEventListener("click", () => {
+      const entry = {
+        id: uid("WA"),
+        at: new Date().toISOString(),
+        eventType: "connection_probe",
+        orderId: null,
+        orderNumber: "PROBE",
+        phoneMasked: typeof COORDINATOR_PHONE_MASK !== "undefined" ? COORDINATOR_PHONE_MASK : "+966******000",
+        status: "mocked",
+        message: "🔌 فحص اتصال WhatsApp Cloud API · الوضع الحالي: Mock · السجل يعمل",
+      };
+      state.whatsapp.unshift(entry);
+      saveState();
+      renderWhatsApp();
+      document.getElementById("waDispatchMsg").textContent = "✓ فحص الاتصال · Mock online · Audit مسجّل";
+      toast("WhatsApp Probe", "Mock connection OK");
+    });
+    document.getElementById("btnDispatchWa")?.addEventListener("click", () => {
+      const oid = document.getElementById("waOrderSelect")?.value;
+      const eventType = document.getElementById("waEventType")?.value || "manual_test";
+      const order = state.orders.find((o) => o.id === oid) || {
+        id: "test",
+        orderNumber: "WSL-TEST",
+        title: "اختبار مركز الإرسال",
+        client: "عميل تجريبي",
+        provider: "مقدم تجريبي",
+        amount: 1500,
+      };
+      if (platformSettings?.whatsappEnabled === false) {
+        state.whatsapp.unshift({
+          id: uid("WA"),
+          at: new Date().toISOString(),
+          eventType,
+          orderNumber: order.orderNumber,
+          phoneMasked: "disabled_by_settings",
+          status: "skipped",
+          message: "تم التخطي: واتساب متوقف من إعدادات المنصة",
+        });
+        saveState();
+        renderWhatsApp();
+        document.getElementById("waDispatchMsg").textContent = "skipped · واتساب متوقف من الإعدادات";
+        return;
+      }
+      sendWhatsAppToCoordinator(order, eventType);
+      document.getElementById("waDispatchMsg").textContent = `✓ إرسال/محاكاة · ${eventType} · ${order.orderNumber}`;
+    });
+    document.getElementById("btnDispatchLatest")?.addEventListener("click", () => {
+      const order = state.orders[0];
+      if (!order) return toast("لا طلبات", "", "err");
+      document.getElementById("waOrderSelect").value = order.id;
+      document.getElementById("waEventType").value = "order_created";
+      document.getElementById("btnDispatchWa").click();
+    });
+
+    function escapeHtml(str = "") {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    /***********************
+     * Order CRUD + status
+     ***********************/
+    function findOrder(id) {
+      return state.orders.find((o) => o.id === id);
+    }
+
+    function setStatus(id, next, { notify = true, silent = false } = {}) {
+      const order = findOrder(id);
+      if (!order) return;
+      const prev = order.status;
+      if (prev === next) return;
+
+      order.status = next;
+      order.updatedAt = new Date().toISOString();
+      saveState();
+
+      // Escrow balance updates automatically via escrowTotals()
+      if (!silent) {
+        toast(
+          "تم تحديث الحالة",
+          `${order.orderNumber}: ${STATUS[prev].label} ← ${STATUS[next].label}\nرصيد الضمان الآن: ${money(escrowTotals().held)}`
+        );
+      }
+
+      if (notify) {
+        if (next === "escrow") {
+          sendWhatsAppToCoordinator(order, "escrow_funded");
+        } else if (next === "completed") {
+          sendWhatsAppToCoordinator(order, "order_completed");
+        }
+      }
+      renderOrders();
+      renderStats();
+    }
+
+    function updateAmount(id, amount) {
+      const order = findOrder(id);
+      if (!order) return;
+      const prev = order.amount;
+      order.amount = Number(amount);
+      order.updatedAt = new Date().toISOString();
+      saveState();
+      toast("تحديث مبلغ الضمان", `${order.orderNumber}: ${money(prev)} ← ${money(order.amount)}\nالإجمالي المجمّد: ${money(escrowTotals().held)}`);
+      if (order.status === "escrow") {
+        sendWhatsAppToCoordinator(order, "amount_updated");
+      }
+      renderOrders();
+      renderStats();
+    }
+
+    document.getElementById("orderForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const id = document.getElementById("fId").value;
+      const payload = {
+        title: document.getElementById("fTitle").value.trim(),
+        client: document.getElementById("fClient").value.trim(),
+        provider: document.getElementById("fProvider").value.trim(),
+        description: document.getElementById("fDesc").value.trim(),
+        amount: Number(document.getElementById("fAmount").value),
+        days: Number(document.getElementById("fDays").value) || 7,
+        status: document.getElementById("fStatus").value,
+      };
+
+      if (!payload.title || !payload.client || !payload.provider || !(payload.amount > 0)) {
+        toast("تحقق من الحقول", "العنوان، العميل، المقدم، والمبلغ مطلوبة", "err");
+        return;
+      }
+
+      // light content gate
+      const blob = `${payload.title} ${payload.description}`.toLowerCase();
+      const hit = BANNED.find((w) => blob.includes(w.toLowerCase()));
+      if (hit) {
+        toast("محتوى محظور", `تم رفض الحفظ بسبب: ${hit}`, "err");
+        return;
+      }
+
+      if (id) {
+        const order = findOrder(id);
+        const prevStatus = order.status;
+        Object.assign(order, payload, { updatedAt: new Date().toISOString() });
+        saveState();
+        toast("تم تحديث الطلب", order.orderNumber);
+        if (prevStatus !== order.status) {
+          if (order.status === "escrow") sendWhatsAppToCoordinator(order, "escrow_funded");
+          if (order.status === "completed") sendWhatsAppToCoordinator(order, "order_completed");
+        } else if (order.status === "escrow") {
+          // amount may have changed while in escrow
+          sendWhatsAppToCoordinator(order, "amount_updated");
+        }
+      } else {
+        const order = {
+          id: uid("o").replace("WSL", "id"),
+          orderNumber: uid(),
+          ...payload,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        // normalize id
+        order.id = "o_" + Math.random().toString(36).slice(2, 9);
+        state.orders.unshift(order);
+        if (!state.clients.includes(order.client)) state.clients.push(order.client);
+        saveState();
+        toast("تم إنشاء الطلب", order.orderNumber);
+        if (order.status === "escrow") sendWhatsAppToCoordinator(order, "deal_ready_for_execution");
+        if (order.status === "completed") sendWhatsAppToCoordinator(order, "order_completed");
+      }
+
+      resetOrderForm();
+      renderOrders();
+      renderStats();
+    });
+
+    function resetOrderForm() {
+      document.getElementById("orderFormTitle").textContent = "إضافة طلب جديد";
+      document.getElementById("fId").value = "";
+      document.getElementById("orderForm").reset();
+      document.getElementById("fAmount").value = "1000";
+      document.getElementById("fDays").value = "7";
+      document.getElementById("fStatus").value = "negotiating";
+    }
+
+    document.getElementById("btnCancelEdit").addEventListener("click", resetOrderForm);
+
+    document.getElementById("ordersList").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-act]");
+      if (!btn) return;
+      const id = btn.dataset.id;
+      const act = btn.dataset.act;
+      const order = findOrder(id);
+      if (!order) return;
+
+      if (act === "escrow") setStatus(id, "escrow");
+      if (act === "complete") setStatus(id, "completed");
+      if (act === "negotiate") setStatus(id, "negotiating", { notify: false });
+      if (act === "cancel") setStatus(id, "cancelled", { notify: false });
+      if (act === "wa") sendWhatsAppToCoordinator(order, order.status === "completed" ? "order_completed" : order.status === "escrow" ? "escrow_funded" : "deal_ready_for_execution");
+      if (act === "amount") {
+        document.getElementById("amtOrderId").value = id;
+        document.getElementById("amtValue").value = order.amount;
+        document.getElementById("amountModal").classList.add("open");
+      }
+      if (act === "edit") {
+        document.getElementById("orderFormTitle").textContent = "تعديل الطلب";
+        document.getElementById("fId").value = order.id;
+        document.getElementById("fTitle").value = order.title;
+        document.getElementById("fClient").value = order.client;
+        document.getElementById("fProvider").value = order.provider;
+        document.getElementById("fDesc").value = order.description || "";
+        document.getElementById("fAmount").value = order.amount;
+        document.getElementById("fDays").value = order.days;
+        document.getElementById("fStatus").value = order.status === "cancelled" ? "negotiating" : order.status;
+        document.getElementById("fTitle").focus();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
+
+    document.getElementById("filterStatus").addEventListener("change", renderOrders);
+    document.getElementById("filterQ").addEventListener("input", renderOrders);
+
+    document.getElementById("btnSaveAmount").addEventListener("click", () => {
+      const id = document.getElementById("amtOrderId").value;
+      const val = Number(document.getElementById("amtValue").value);
+      if (!(val > 0)) return toast("مبلغ غير صالح", "", "err");
+      updateAmount(id, val);
+      document.getElementById("amountModal").classList.remove("open");
+    });
+    document.getElementById("btnCloseAmount").addEventListener("click", () => {
+      document.getElementById("amountModal").classList.remove("open");
+    });
+    document.getElementById("amountModal").addEventListener("click", (e) => {
+      if (e.target.id === "amountModal") e.target.classList.remove("open");
+    });
+
+    document.getElementById("btnNotifyAllEscrow").addEventListener("click", () => {
+      const held = state.orders.filter((o) => o.status === "escrow");
+      if (!held.length) return toast("لا طلبات في الضمان", "", "err");
+      held.forEach((o) => sendWhatsAppToCoordinator(o, "escrow_funded"));
+    });
+
+    document.getElementById("btnResetDemo").addEventListener("click", () => {
+      if (!confirm("إعادة ضبط البيانات التجريبية؟")) return;
+      state = defaultState();
+      saveState();
+      renderAll();
+      toast("تمت إعادة البيانات", "تم تحميل الطلبات التجريبية");
+    });
+
+    document.getElementById("btnTestWa").addEventListener("click", () => {
+      const sample = state.orders[0] || {
+        id: "test",
+        orderNumber: "WSL-TEST",
+        title: "صفقة تجريبية",
+        client: "عميل تجريبي",
+        provider: "مقدم تجريبي",
+        amount: 1500,
+      };
+      sendWhatsAppToCoordinator(sample, "manual_test");
+      showSection("whatsapp");
+    });
+
+    /***********************
+     * Security tools (UI)
+     ***********************/
+    document.getElementById("btnInspectIp").addEventListener("click", () => {
+      const ip = document.getElementById("secIp").value.trim();
+      const hit = DEMO_THREAT_IPS[ip];
+      const report = hit || { isVpn: false, isProxy: false, isTor: false, isDatacenter: false };
+      const blocked = report.isVpn || report.isProxy || report.isTor || report.isDatacenter;
+      const text = blocked
+        ? `⛔ مرفوض\nIP: ${ip}\nVPN=${report.isVpn} PROXY=${report.isProxy} TOR=${report.isTor} DC=${report.isDatacenter}\nالإجراء: request_rejected + security_log`
+        : `✅ نظيف\nIP: ${ip}\nلا مؤشرات VPN/Proxy/Tor/Datacenter`;
+      document.getElementById("secIpResult").textContent = text;
+      toast(blocked ? "VPN/Proxy محظور" : "IP نظيف", ip, blocked ? "err" : "");
+    });
+
+    document.getElementById("btnModeration").addEventListener("click", () => {
+      const text = document.getElementById("secText").value || "";
+      const hits = BANNED.filter((w) => text.toLowerCase().includes(w.toLowerCase()));
+      document.getElementById("secModResult").textContent = hits.length
+        ? `⛔ محظور: ${hits.join(" · ")}`
+        : "✅ المحتوى نظيف";
+    });
+
+    /***********************
+     * AI Assistant (local)
+     ***********************/
+    function assistantReply(message) {
+      const m = message.toLowerCase();
+      if (/احتيال|نصب|محرم|قمار|scam|fraud/.test(m)) {
+        return "أقدر سؤالك، لكن سياسة «وصل» النظيفة تمنع مناقشة هذا الموضوع. يمكنني شرح الضمان المالي (Escrow) وكيف تُجمَّد الأموال حتى التراضي — بدون VPN.";
+      }
+      if (/vpn|بروكسي|proxy|tor/.test(m)) {
+        return "تحظر وصل شبكات VPN وProxy وTor عند التسجيل والدخول لحماية الهوية الجغرافية ومنع التلاعب. استخدم اتصالًا مباشرًا فقط.";
+      }
+      if (/ضمان|escrow|تجميد|تراض|دفع/.test(m)) {
+        return `نظام الضمان (Escrow) في وصل يُجمّد مبلغ العميل كاملًا عند الدفع. يبقى محجوزًا حتى التراضي وقبول التسليم، ثم يُفرج عن صافي المقدم بعد خصم رسوم المنصة (${FEE_PERCENT}%). أي تحويل خارج المنصة مخالفة.`;
+      }
+      if (/منسق|واتساب|whatsapp|إشعار/.test(m)) {
+        return "عند دخول الطلب للضمان أو اكتمال التراضي يُنشأ إشعار واتساب جاهز للمنسق يتضمن رقم الطلب، الطرفين، ومبلغ الضمان — للمتابعة التشغيلية فقط.";
+      }
+      if (/أبدأ|تسجيل|جديد|مميزات|عميل/.test(m)) {
+        return "أهلًا بك في WASL. أنشئ حساب عميل، اختر مقدم خدمة موثقًا، موّل الضمان لتجميد المبلغ، وتابع التنفيذ حتى التراضي. المميزات: Escrow، أمن VPN، تصفية محتوى، ومساعد ذكي.";
+      }
+      return "أنا مساعد وصل. أستطيع شرح التسجيل، تجميد الضمان حتى التراضي، منع VPN، وإشعارات المنسق. ماذا تحب أن تعرف؟";
+    }
+
+    function pushChat(role, content) {
+      const box = document.getElementById("chatBox");
+      const div = document.createElement("div");
+      div.className = `bubble ${role === "user" ? "user" : "bot"}`;
+      div.textContent = content;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    document.getElementById("promptPreview").textContent = WASL_AI_SYSTEM_PROMPT;
+    pushChat("bot", "مرحبًا بك في مساعد وصل 👋 اسأل عن الضمان، التسجيل، أو سياسة VPN.");
+
+    document.getElementById("chatForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const input = document.getElementById("chatInput");
+      const msg = input.value.trim();
+      if (!msg) return;
+      pushChat("user", msg);
+      input.value = "";
+      setTimeout(() => pushChat("bot", assistantReply(msg)), 250);
+    });
+    document.querySelectorAll("#chatForm [data-q]").forEach((b) => {
+      b.addEventListener("click", () => {
+        document.getElementById("chatInput").value = b.dataset.q;
+        document.getElementById("chatForm").requestSubmit();
+      });
+    });
+
+    /***********************
+     * Boot
+     ***********************/
+    /***********************
+     * Success Stories
+     ***********************/
+    const SUCCESS_STORIES = [
+      { id: "s1", rating: 5, title: "تسليم احترافي قبل الموعد", comment: "تجربة ضمان Escrow أعطتني ثقة كاملة. المطور التزم بالنطاق والجودة داخل وصل.", sector: "tech", client: "أحمد المحمود", country: "السعودية", city: "جدة", provider: "خالد التقني", headline: "Full-stack · Next.js", order: "منصة حجوزات طبية" },
+      { id: "s2", rating: 5, title: "هوية بصرية فاخرة", comment: "المصممة دمجت الفخامة العربية مع وضوح رقمي. الإفراج بعد الموافقة كان مثاليًا.", sector: "design", client: "سارة العتيبي", country: "الإمارات", city: "دبي", provider: "نورة المصممة", headline: "UI/UX وهوية بصرية", order: "إعادة تصميم تطبيق" },
+      { id: "s3", rating: 5, title: "عقد محكم بلا ثغرات", comment: "الاستشارة القانونية وفّرت حماية واضحة للطرفين. كل خطوة موثّقة في المنصة.", sector: "legal", client: "أحمد المحمود", country: "السعودية", city: "الرياض", provider: "عمر المستشار", headline: "استشارات قانونية", order: "مراجعة عقد شراكة" },
+      { id: "s4", rating: 4, title: "حرفي دقيق ومواعيد ثابتة", comment: "نجارة منزلية فاخرة. المبلغ بقي في الضمان حتى اكتمال التركيب والمعاينة.", sector: "home", client: "فيصل الشمري", country: "السعودية", city: "الدمام", provider: "سالم الحرفي", headline: "نجارة وديكور", order: "مكتبة جدارية" },
+      { id: "s5", rating: 5, title: "MVP يعمل من اليوم الأول", comment: "المنصة اشتغلت فور التسليم. الأمان ومنع VPN أعطوني راحة بال كعميل مؤسسي.", sector: "tech", client: "سارة العتيبي", country: "الإمارات", city: "أبوظبي", provider: "خالد التقني", headline: "Full-stack · Next.js", order: "لوحة تشغيلية" },
+      { id: "s6", rating: 4, title: "نتائج تسويق قابلة للقياس", comment: "التقارير شفافة داخل وصل. لا تحويلات خارجية — فقط Escrow وتنفيذ.", sector: "marketing", client: "أحمد المحمود", country: "الكويت", city: "الكويت", provider: "نورة المصممة", headline: "تصميم + محتوى", order: "حملة إطلاق" },
+    ];
+    let reviewSector = "all";
+
+    function stars(n) {
+      const f = Math.max(0, Math.min(5, Math.round(n)));
+      return "★".repeat(f) + "☆".repeat(5 - f);
+    }
+
+    function sectorAr(id) {
+      return ({ tech: "تقني", design: "تصميم", home: "حرفي", legal: "قانوني", marketing: "تسويق", business: "أعمال" })[id] || id || "عام";
+    }
+
+    function renderSuccessStories() {
+      const grid = document.getElementById("successStoriesGrid");
+      const chips = document.getElementById("reviewStatsChips");
+      if (!grid) return;
+      const list = SUCCESS_STORIES.filter((s) => reviewSector === "all" || s.sector === reviewSector);
+      const avg = list.length
+        ? Math.round((list.reduce((a, s) => a + s.rating, 0) / list.length) * 10) / 10
+        : 0;
+      if (chips) {
+        chips.innerHTML = `
+          <span class="chip cyan">متوسط ${avg || "—"}</span>
+          <span class="chip amber">موثّق ${SUCCESS_STORIES.length}</span>
+          <span class="chip ok">معروض ${list.length}</span>`;
+      }
+      if (!list.length) {
+        grid.innerHTML = `<div class="empty">لا قصص في هذا القطاع — اختر «الكل»</div>`;
+        return;
+      }
+      grid.innerHTML = list.map((s) => `
+        <article class="story-card">
+          <div style="display:flex;flex-wrap:wrap;gap:.45rem;align-items:center">
+            <span class="story-stars">${stars(s.rating)}</span>
+            <strong>${s.rating.toFixed(1)}</strong>
+            <span class="badge badge-completed">موثّق</span>
+            <span class="badge badge-escrow">${sectorAr(s.sector)}</span>
+          </div>
+          <h4 style="margin:.65rem 0 .35rem">${escapeHtml(s.title)}</h4>
+          <p style="color:var(--muted);font-size:.86rem;line-height:1.75">“${escapeHtml(s.comment)}”</p>
+          <div style="margin-top:.85rem;border-radius:14px;padding:.75rem;background:linear-gradient(90deg,rgba(2,11,28,.9),rgba(13,27,42,.95));border:1px solid rgba(34,211,238,.15)">
+            <div style="display:flex;justify-content:space-between;gap:.75rem;flex-wrap:wrap">
+              <div>
+                <div style="font-weight:800">${escapeHtml(s.client)}</div>
+                <div style="font-size:.72rem;color:var(--muted)">${escapeHtml(s.country)}${s.city ? " · " + escapeHtml(s.city) : ""}</div>
+              </div>
+              <div style="text-align:left">
+                <div style="font-size:.65rem;color:#67e8f9">مقدم الخدمة</div>
+                <div style="font-weight:700;color:#fdba74">${escapeHtml(s.provider)}</div>
+                <div style="font-size:.68rem;color:var(--muted)">${escapeHtml(s.headline || "")}</div>
+              </div>
+            </div>
+            <div style="margin-top:.45rem;padding-top:.45rem;border-top:1px solid rgba(255,255,255,.08);font-size:.72rem;color:var(--muted)">
+              ${escapeHtml(s.order || "طلب مكتمل")}
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    document.getElementById("reviewFilters")?.addEventListener("click", (e) => {
+      const btn = e.target.closest(".review-filter");
+      if (!btn) return;
+      reviewSector = btn.dataset.sector || "all";
+      document.querySelectorAll(".review-filter").forEach((b) => b.classList.toggle("active", b === btn));
+      renderSuccessStories();
+    });
+
+    /***********************
+     * Disputes Sandbox (frontend)
+     ***********************/
+    if (!state.disputes) state.disputes = [];
+    let selectedDisputeId = null;
+    const DISPUTE_STAGES = [
+      { id: "filed", label: "1. فتح النزاع" },
+      { id: "review", label: "2. التحقيق" },
+      { id: "evidence", label: "3. الأدلة" },
+      { id: "mediation", label: "4. الوساطة" },
+      { id: "decision", label: "5. القرار" },
+    ];
+    const PROTECTION_100 =
+      "أموال الضمان محمية 100% لدى منصة وصل حتى صدور قرار لجنة الوساطة العادلة — لا إفراج ولا استرداد إلا بقرار موثّق يحمي الطرفين.";
+
+    function ensureDisputesArray() {
+      if (!Array.isArray(state.disputes)) state.disputes = [];
+    }
+
+    function renderDisputes() {
+      ensureDisputesArray();
+      const held = state.orders.filter((o) => o.status === "escrow");
+      const sel = document.getElementById("disputeOrderSelect");
+      if (sel) {
+        sel.innerHTML = held.length
+          ? held.map((o) => `<option value="${o.id}">${escapeHtml(o.orderNumber)} — ${escapeHtml(o.title)} (${money(o.amount)})</option>`).join("")
+          : `<option value="">لا طلبات في الضمان</option>`;
+      }
+      const open = state.disputes.filter((d) => !String(d.status).startsWith("resolved")).length;
+      const refunded = state.disputes.filter((d) => d.status === "resolved_refund_client").length;
+      const released = state.disputes.filter((d) => d.status === "resolved_release_provider").length;
+      const statsEl = document.getElementById("disputeStats");
+      if (statsEl) {
+        statsEl.innerHTML = [
+          statCard("نزاعات", state.disputes.length, "", ""),
+          statCard("مفتوحة", open, "تحت الحماية", "amber"),
+          statCard("استرداد عميل", refunded, "", "ok"),
+          statCard("حماية الضمان", "100%", "حتى القرار", "warn"),
+        ].join("");
+      }
+
+      const list = document.getElementById("disputesList");
+      if (!list) return;
+      if (!state.disputes.length) {
+        list.innerHTML = `<div class="empty">لا نزاعات — افتح نزاعًا على طلب في الضمان أو شغّل المحاكاة</div>`;
+      } else {
+        list.innerHTML = state.disputes.map((d) => {
+          const order = state.orders.find((o) => o.id === d.orderId);
+          return `<button type="button" class="order-item" style="width:100%;text-align:right;cursor:pointer;${selectedDisputeId===d.id?"border-color:rgba(34,211,238,.5)":""}" data-did="${d.id}">
+            <div style="display:flex;gap:.45rem;flex-wrap:wrap;align-items:center">
+              <span class="badge ${String(d.status).startsWith("resolved")?"badge-completed":"badge-cancelled"}">${escapeHtml(d.statusLabel || d.status)}</span>
+              <span style="font-family:monospace;font-size:.72rem;color:var(--muted)">${escapeHtml(order?.orderNumber || "")}</span>
+            </div>
+            <div style="font-weight:700;margin-top:.35rem">${escapeHtml(order?.title || "طلب")}</div>
+            <div style="font-size:.8rem;color:var(--muted);margin-top:.25rem">${escapeHtml(d.reason)}</div>
+          </button>`;
+        }).join("");
+      }
+      const selected = state.disputes.find((d) => d.id === selectedDisputeId) || state.disputes[0];
+      if (selected) {
+        selectedDisputeId = selected.id;
+        renderDisputeDetail(selected);
+      } else {
+        document.getElementById("disputeStages").innerHTML = "";
+        document.getElementById("disputeProtection").textContent = PROTECTION_100;
+        document.getElementById("disputeEvidenceList").innerHTML = `<div class="empty">—</div>`;
+        document.getElementById("disputeTimeline").innerHTML = "";
+        document.getElementById("disputeDecision").textContent = "";
+      }
+    }
+
+    function renderDisputeDetail(d) {
+      const idx = Math.max(0, DISPUTE_STAGES.findIndex((s) => s.id === d.stage));
+      document.getElementById("disputeStages").innerHTML = DISPUTE_STAGES.map((s, i) =>
+        `<span class="badge ${i <= idx ? "badge-escrow" : "badge-neutral"}">${s.label}</span>`
+      ).join("");
+      document.getElementById("disputeProtection").textContent = d.protection || PROTECTION_100;
+      document.getElementById("disputeEvidenceList").innerHTML = (d.evidence || []).map((e) =>
+        `<div class="wa-item"><strong>${escapeHtml(e.label)}</strong><div style="font-size:.75rem;color:var(--muted)">${escapeHtml(e.note || e.kind || "")}</div></div>`
+      ).join("") || `<div class="empty">لا أدلة</div>`;
+      document.getElementById("disputeTimeline").innerHTML = [...(d.timeline || [])].reverse().map((t) =>
+        `<div class="wa-item"><span class="badge badge-escrow">${escapeHtml(t.action)}</span> <span style="font-size:.72rem;color:var(--muted)">${escapeHtml(t.actor)}</span><div style="font-size:.78rem;margin-top:.25rem">${escapeHtml(t.detail || "")}</div></div>`
+      ).join("") || "";
+      document.getElementById("disputeDecision").innerHTML = d.resolution
+        ? `<div class="card flat" style="background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3)"><strong>القرار:</strong> ${escapeHtml(d.decision || "")} — ${escapeHtml(d.resolution)}</div>`
+        : "";
+    }
+
+    function pushDisputeTimeline(d, action, detail, actor = "committee") {
+      d.timeline = d.timeline || [];
+      d.timeline.push({ id: uid("tl"), at: new Date().toISOString(), actor, action, detail });
+    }
+
+    function openLocalDispute(orderId, reason, evidenceLabel) {
+      ensureDisputesArray();
+      const order = state.orders.find((o) => o.id === orderId);
+      if (!order || order.status !== "escrow") {
+        toast("يلزم طلب في الضمان", "", "err");
+        return null;
+      }
+      const d = {
+        id: "dp_" + Math.random().toString(36).slice(2, 8),
+        orderId,
+        reason: reason || "نزاع على التسليم",
+        status: "open",
+        statusLabel: "مفتوح",
+        stage: "filed",
+        protection: PROTECTION_100,
+        evidence: [{ id: uid("ev"), label: evidenceLabel || "دليل أولي", kind: "note", note: reason }],
+        timeline: [],
+        createdAt: new Date().toISOString(),
+      };
+      pushDisputeTimeline(d, "dispute_opened", d.reason, "client");
+      order.status = "escrow"; // remains funded; flagged via dispute
+      state.disputes.unshift(d);
+      selectedDisputeId = d.id;
+      saveState();
+      return d;
+    }
+
+    function resolveLocalDispute(d, decision) {
+      const order = state.orders.find((o) => o.id === d.orderId);
+      if (decision === "refund_client") {
+        if (order) order.status = "cancelled";
+        d.status = "resolved_refund_client";
+        d.statusLabel = "محسوم · استرداد للعميل";
+        d.decision = "refund_client";
+        d.resolution = "قرار اللجنة: إعادة الأموال للعميل مع حماية كاملة عبر الضمان.";
+      } else {
+        if (order) order.status = "completed";
+        d.status = "resolved_release_provider";
+        d.statusLabel = "محسوم · إفراج للمقدم";
+        d.decision = "release_provider";
+        d.resolution = "قرار اللجنة: إطلاق المستحقات لمقدم الخدمة بعد ثبوت التنفيذ.";
+      }
+      d.stage = "decision";
+      pushDisputeTimeline(d, "final_decision", d.resolution, "committee");
+      if (order) {
+        order.updatedAt = new Date().toISOString();
+        sendWhatsAppToCoordinator(order, decision === "refund_client" ? "amount_updated" : "escrow_released");
+      }
+      saveState();
+    }
+
+    function runFullDisputeSandbox(decision) {
+      let order = state.orders.find((o) => o.status === "escrow");
+      if (!order) {
+        // create + fund quickly
+        order = {
+          id: "o_" + Math.random().toString(36).slice(2, 8),
+          orderNumber: uid(),
+          title: "طلب نزاع تجريبي",
+          client: state.clients[0] || "عميل",
+          provider: state.providers[0]?.name || "مقدم",
+          description: "محاكاة تحكيم",
+          amount: 1200,
+          days: 7,
+          status: "escrow",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        state.orders.unshift(order);
+      }
+      const d = openLocalDispute(order.id, "محاكاة نزاع: خلاف على التسليم أثناء الضمان", "وصف المشكلة");
+      if (!d) return;
+      d.stage = "review"; d.status = "investigating"; d.statusLabel = "تحقيق";
+      pushDisputeTimeline(d, "investigation_started", "بدء مراجعة اللجنة");
+      d.evidence.push({ id: uid("ev"), label: "لقطة شاشة للتسليم", kind: "screenshot", note: "فجوة المتطلبات" });
+      d.evidence.push({ id: uid("ev"), label: "رد المقدم", kind: "note", note: "تنفيذ البنود الأساسية" });
+      d.stage = "evidence"; d.status = "awaiting_evidence"; d.statusLabel = "جمع أدلة";
+      pushDisputeTimeline(d, "evidence_uploaded", "أدلة الطرفين");
+      d.stage = "mediation"; d.status = "mediation"; d.statusLabel = "وساطة";
+      pushDisputeTimeline(d, "mediation_session", "جلسة وساطة مع استمرار حماية الضمان 100%");
+      resolveLocalDispute(d, decision);
+      renderDisputes();
+      renderStats();
+      renderOrders();
+      document.getElementById("disputeMsg").textContent =
+        `✓ محاكاة مكتملة · ${d.statusLabel} · ${PROTECTION_100}`;
+      toast("تحكيم عادل", d.statusLabel);
+      showSection("disputes");
+    }
+
+    document.getElementById("disputesList")?.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-did]");
+      if (!btn) return;
+      selectedDisputeId = btn.dataset.did;
+      renderDisputes();
+    });
+    document.getElementById("btnOpenDispute")?.addEventListener("click", () => {
+      const orderId = document.getElementById("disputeOrderSelect").value;
+      const reason = document.getElementById("disputeReason").value;
+      const evidence = document.getElementById("disputeEvidence").value;
+      const d = openLocalDispute(orderId, reason, evidence);
+      if (!d) return;
+      renderDisputes();
+      renderStats();
+      document.getElementById("disputeMsg").textContent = "✓ فُتح النزاع — الضمان محمي 100% حتى القرار";
+      toast("نزاع مفتوح", "الضمان مجمّد ومحمي");
+    });
+    document.getElementById("btnInvestigate")?.addEventListener("click", () => {
+      const d = state.disputes.find((x) => x.id === selectedDisputeId);
+      if (!d) return;
+      d.stage = "review"; d.status = "investigating"; d.statusLabel = "تحقيق";
+      pushDisputeTimeline(d, "investigation_started", "لجنة الوساطة تراجع الملف");
+      saveState(); renderDisputes();
+    });
+    document.getElementById("btnMediate")?.addEventListener("click", () => {
+      const d = state.disputes.find((x) => x.id === selectedDisputeId);
+      if (!d) return;
+      d.stage = "mediation"; d.status = "mediation"; d.statusLabel = "وساطة";
+      pushDisputeTimeline(d, "mediation_session", "جلسة عادلة مع حماية الضمان");
+      saveState(); renderDisputes();
+    });
+    document.getElementById("btnAddClientEv")?.addEventListener("click", () => {
+      const d = state.disputes.find((x) => x.id === selectedDisputeId);
+      if (!d) return;
+      d.evidence.push({ id: uid("ev"), label: "دليل إضافي من العميل", kind: "note", note: "تفاصيل الفجوة" });
+      d.stage = "evidence"; d.status = "awaiting_evidence"; d.statusLabel = "جمع أدلة";
+      pushDisputeTimeline(d, "evidence_uploaded", "دليل عميل", "client");
+      saveState(); renderDisputes();
+    });
+    document.getElementById("btnAddProviderEv")?.addEventListener("click", () => {
+      const d = state.disputes.find((x) => x.id === selectedDisputeId);
+      if (!d) return;
+      d.evidence.push({ id: uid("ev"), label: "دليل المقدم", kind: "note", note: "إثبات التنفيذ" });
+      pushDisputeTimeline(d, "evidence_uploaded", "دليل مقدم", "provider");
+      saveState(); renderDisputes();
+    });
+    document.getElementById("btnResolveRefund")?.addEventListener("click", () => {
+      const d = state.disputes.find((x) => x.id === selectedDisputeId);
+      if (!d) return;
+      resolveLocalDispute(d, "refund_client");
+      renderDisputes(); renderStats(); renderOrders();
+      document.getElementById("disputeMsg").textContent = "✓ استرداد للعميل — " + PROTECTION_100;
+    });
+    document.getElementById("btnResolveRelease")?.addEventListener("click", () => {
+      const d = state.disputes.find((x) => x.id === selectedDisputeId);
+      if (!d) return;
+      resolveLocalDispute(d, "release_provider");
+      renderDisputes(); renderStats(); renderOrders();
+      document.getElementById("disputeMsg").textContent = "✓ إفراج للمقدم — " + PROTECTION_100;
+    });
+    document.getElementById("btnDisputeSandboxRefund")?.addEventListener("click", () => runFullDisputeSandbox("refund_client"));
+    document.getElementById("btnDisputeSandboxRelease")?.addEventListener("click", () => runFullDisputeSandbox("release_provider"));
+
+    /***********************
+     * Revenue Analytics (frontend)
+     ***********************/
+    function derivePayoutStatusLocal(orderStatus) {
+      if (orderStatus === "escrow") return "pending_clearance";
+      if (orderStatus === "completed") return "paid";
+      if (orderStatus === "cancelled") return "on_hold";
+      if (orderStatus === "negotiating") return "queued";
+      return "processing";
+    }
+
+    function renderRevenue() {
+      const t = escrowTotals();
+      const feeRate = FEE_PERCENT;
+      const gmv = state.orders.reduce((s, o) => s + (Number(o.amount) || 0), 0);
+      const releasedOrders = state.orders.filter((o) => o.status === "completed");
+      const fees = releasedOrders.reduce((s, o) => s + calcFee(o.amount).fee, 0);
+      const providerNet = releasedOrders.reduce((s, o) => s + calcFee(o.amount).net, 0);
+      const pendingNet = state.orders
+        .filter((o) => o.status === "escrow")
+        .reduce((s, o) => s + calcFee(o.amount).net, 0);
+
+      const kpis = document.getElementById("revenueKpis");
+      if (kpis) {
+        kpis.innerHTML = [
+          statCard("GMV", money(gmv), `${state.orders.length} معاملة`, ""),
+          statCard("إيراد المنصة", money(fees), `عمولة ${feeRate}%`, "warn"),
+          statCard("مدفوعات المقدمين", money(providerNet), `${releasedOrders.length} محرّر`, "ok"),
+          statCard("معلّق في الضمان", money(t.held), `صافي مقدم ${money(pendingNet)}`, "amber"),
+        ].join("");
+      }
+      document.getElementById("revenueCommission").textContent = feeRate + "%";
+
+      // chart from last 14 synthetic points based on orders
+      const keys = dayKeys(14);
+      const series = keys.map((k) => ({ label: k.slice(5), gmv: 0, held: 0, fees: 0, net: 0 }));
+      state.orders.forEach((o) => {
+        const k = (o.updatedAt || o.createdAt || "").slice(0, 10);
+        const idx = keys.indexOf(k);
+        const i = idx >= 0 ? idx : series.length - 1;
+        series[i].gmv += Number(o.amount) || 0;
+        if (o.status === "escrow") series[i].held += Number(o.amount) || 0;
+        if (o.status === "completed") {
+          const f = calcFee(o.amount);
+          series[i].fees += f.fee;
+          series[i].net += f.net;
+        }
+      });
+      // smooth empty
+      if (series.every((s) => s.gmv === 0)) {
+        series.forEach((s, i) => {
+          s.gmv = Math.round((gmv / series.length) * (i + 1) * 100) / 100;
+          s.held = Math.round((t.held / series.length) * (i + 1) * 100) / 100;
+          s.fees = Math.round((fees / series.length) * (i + 1) * 100) / 100;
+          s.net = Math.round((providerNet / series.length) * (i + 1) * 100) / 100;
+        });
+      }
+      const w = 640, h = 200, pad = 16;
+      const maxY = Math.max(1, ...series.flatMap((s) => [s.gmv, s.held, s.net, s.fees * 8]));
+      const n = Math.max(series.length - 1, 1);
+      const line = (key, scale = 1) => series.map((s, i) => {
+        const x = pad + (i / n) * (w - pad * 2);
+        const y = h - pad - ((s[key] * scale) / maxY) * (h - pad * 2);
+        return `${x},${y}`;
+      }).join(" ");
+      const chart = document.getElementById("revenueChart");
+      if (chart) {
+        chart.innerHTML = `<svg class="chart-svg" viewBox="0 0 ${w} ${h}">
+          <polyline points="${line("gmv")}" fill="none" stroke="#22d3ee" stroke-width="2.5"/>
+          <polyline points="${line("held")}" fill="none" stroke="#fb923c" stroke-width="2"/>
+          <polyline points="${line("net")}" fill="none" stroke="#34d399" stroke-width="2"/>
+          <polyline points="${line("fees", 8)}" fill="none" stroke="#a78bfa" stroke-width="2" stroke-dasharray="5 4"/>
+        </svg>`;
+      }
+
+      const breakdown = document.getElementById("revenueBreakdown");
+      if (breakdown) {
+        const counts = {
+          pending_clearance: state.orders.filter((o) => o.status === "escrow").length,
+          paid: state.orders.filter((o) => o.status === "completed").length,
+          queued: state.orders.filter((o) => o.status === "negotiating").length,
+          on_hold: state.orders.filter((o) => o.status === "cancelled").length,
+        };
+        breakdown.innerHTML = Object.entries(counts).map(([k, v]) =>
+          `<div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid rgba(148,163,184,.1)"><span>${
+            ({ pending_clearance: "بانتظار إخلاء الضمان", paid: "تم التحويل", queued: "قيد الانتظار", on_hold: "موقوف" })[k]
+          }</span><strong>${v}</strong></div>`
+        ).join("");
+      }
+
+      const filter = document.getElementById("payoutFilter")?.value || "all";
+      let rows = state.orders.map((o) => ({
+        ...o,
+        payoutStatus: derivePayoutStatusLocal(o.status),
+        fee: calcFee(o.amount).fee,
+        net: calcFee(o.amount).net,
+      }));
+      if (filter !== "all") rows = rows.filter((r) => r.payoutStatus === filter);
+      const labels = {
+        pending_clearance: "بانتظار إخلاء الضمان",
+        queued: "في القائمة",
+        processing: "قيد المعالجة",
+        paid: "تم التحويل",
+        on_hold: "موقوف",
+        failed: "فشل",
+      };
+      const table = document.getElementById("payoutsTable");
+      if (table) {
+        table.innerHTML = rows.length
+          ? `<div class="table-wrap"><table><thead><tr>
+              <th>الطلب</th><th>العميل</th><th>المقدم</th><th>الإجمالي</th><th>عمولة</th><th>صافي</th><th>Payout</th>
+            </tr></thead><tbody>${rows.map((r) => `<tr>
+              <td><div style="font-family:monospace;font-size:.7rem">${escapeHtml(r.orderNumber)}</div>${escapeHtml(r.title)}</td>
+              <td>${escapeHtml(r.client)}</td>
+              <td>${escapeHtml(r.provider)}</td>
+              <td>${money(r.amount)}</td>
+              <td>${money(r.fee)}</td>
+              <td>${money(r.net)}</td>
+              <td><span class="badge badge-escrow">${labels[r.payoutStatus] || r.payoutStatus}</span></td>
+            </tr>`).join("")}</tbody></table></div>`
+          : `<div class="empty">لا صفوف</div>`;
+      }
+    }
+
+    document.getElementById("btnRefreshRevenue")?.addEventListener("click", () => {
+      renderRevenue();
+      toast("تحديث الإيرادات", nowLabel());
+    });
+    document.getElementById("payoutFilter")?.addEventListener("change", renderRevenue);
+
+    /***********************
+     * Platform settings + currency
+     ***********************/
+    const SETTINGS_KEY = "wasl_platform_settings_v1";
+    function defaultSettings() {
+      return {
+        defaultCurrency: "USD",
+        feePercent: 10,
+        whatsappEnabled: true,
+        maintenanceMode: false,
+        fx: { USD: 1, MAD: 10.1, EUR: 0.92 },
+      };
+    }
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem(SETTINGS_KEY);
+        if (!raw) return defaultSettings();
+        return { ...defaultSettings(), ...JSON.parse(raw) };
+      } catch {
+        return defaultSettings();
+      }
+    }
+    let platformSettings = loadSettings();
+
+    function convertUsd(amount, currency) {
+      const fx = platformSettings.fx || { USD: 1, MAD: 10.1, EUR: 0.92 };
+      const rate = fx[currency] || 1;
+      return Math.round(Number(amount || 0) * rate * 100) / 100;
+    }
+    function moneyFX(amount, currency = platformSettings.defaultCurrency) {
+      const v = convertUsd(amount, currency);
+      try {
+        return new Intl.NumberFormat("ar-SA", { style: "currency", currency, maximumFractionDigits: 2 }).format(v);
+      } catch {
+        return v.toFixed(2) + " " + currency;
+      }
+    }
+    // override global money() used across dashboard when settings exist
+    const moneyBase = money;
+    money = function(amount, currency) {
+      // if caller passed currency use it; else platform default with USD base amounts
+      if (currency && currency !== platformSettings.defaultCurrency && currency.length === 3) {
+        return moneyBase(amount, currency);
+      }
+      return moneyFX(amount, platformSettings.defaultCurrency);
+    };
+    // keep fee percent dynamic for revenue calc
+    Object.defineProperty(window, "FEE_PERCENT_DYNAMIC", {
+      get() { return Number(platformSettings.feePercent) || 10; }
+    });
+
+    function renderSettings() {
+      document.getElementById("setCurrency").value = platformSettings.defaultCurrency;
+      document.getElementById("setFee").value = platformSettings.feePercent;
+      document.getElementById("setMad").value = platformSettings.fx.MAD;
+      document.getElementById("setEur").value = platformSettings.fx.EUR;
+      document.getElementById("setWa").checked = !!platformSettings.whatsappEnabled;
+      document.getElementById("setMaint").checked = !!platformSettings.maintenanceMode;
+      document.getElementById("settingsChips").innerHTML = `
+        <span class="chip cyan">${platformSettings.defaultCurrency}</span>
+        <span class="chip amber">عمولة ${platformSettings.feePercent}%</span>
+        <span class="chip ok">WA ${platformSettings.whatsappEnabled ? "ON" : "OFF"}</span>
+        <span class="chip ${platformSettings.maintenanceMode ? "amber" : "ok"}">${platformSettings.maintenanceMode ? "صيانة" : "تشغيل"}</span>`;
+      const cur = platformSettings.defaultCurrency;
+      document.getElementById("settingsPreview").innerHTML = [
+        ["250 USD", moneyFX(250, cur)],
+        ["5300 ضمان", moneyFX(5300, cur)],
+        ["عمولة 1000", moneyFX(1000 * platformSettings.feePercent / 100, cur)],
+        ["صافي 1000", moneyFX(1000 - 1000 * platformSettings.feePercent / 100, cur)],
+      ].map(([l,v]) => `<div class="stat"><div class="label">${l}</div><div class="value" style="font-size:1.1rem">${v}</div></div>`).join("");
+    }
+
+    document.getElementById("btnSaveSettings")?.addEventListener("click", () => {
+      platformSettings = {
+        defaultCurrency: document.getElementById("setCurrency").value,
+        feePercent: Number(document.getElementById("setFee").value) || 10,
+        whatsappEnabled: document.getElementById("setWa").checked,
+        maintenanceMode: document.getElementById("setMaint").checked,
+        fx: {
+          USD: 1,
+          MAD: Number(document.getElementById("setMad").value) || 10.1,
+          EUR: Number(document.getElementById("setEur").value) || 0.92,
+        },
+      };
+      // sync fee used by calcFee/revenue
+      try {
+        // monkey-patch FEE_PERCENT const usage via global helper
+        window.__WASL_FEE__ = platformSettings.feePercent;
+      } catch {}
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(platformSettings));
+      // also mirror key used by React app if same origin
+      localStorage.setItem("wasl_platform_settings", JSON.stringify({
+        defaultCurrency: platformSettings.defaultCurrency,
+        feePercent: platformSettings.feePercent,
+        whatsappEnabled: platformSettings.whatsappEnabled,
+        maintenanceMode: platformSettings.maintenanceMode,
+        fxRates: platformSettings.fx,
+      }));
+      renderSettings();
+      renderStats();
+      renderRevenue();
+      renderOrders();
+      document.getElementById("settingsMsg").textContent =
+        `✓ تم الحفظ — العرض الآن بـ ${platformSettings.defaultCurrency} وعمولة ${platformSettings.feePercent}%`;
+      toast("إعدادات المنصة", `${platformSettings.defaultCurrency} · ${platformSettings.feePercent}%`);
+      if (platformSettings.maintenanceMode) {
+        toast("وضع الصيانة", "مفعّل", "err");
+      }
+    });
+
+    // patch calcFee to use dynamic fee when present
+    const _calcFee = calcFee;
+    calcFee = function(amount) {
+      const feePercent = (window.__WASL_FEE__ != null ? window.__WASL_FEE__ : (platformSettings?.feePercent ?? FEE_PERCENT));
+      const a = Number(amount) || 0;
+      const fee = Math.round(a * (feePercent / 100) * 100) / 100;
+      const net = Math.round((a - fee) * 100) / 100;
+      return { fee, net };
+    };
+
+    /***********************
+     * Digital invoices (frontend)
+     ***********************/
+    if (!state.invoices) state.invoices = [];
+    let currentInvoice = null;
+
+    function buildInvoiceFromOrder(order) {
+      const fee = calcFee(order.amount);
+      return {
+        id: "inv_" + Math.random().toString(36).slice(2, 8),
+        invoiceNumber: "INV-" + (order.orderNumber || uid()),
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+        clientName: order.client,
+        providerName: order.provider,
+        serviceTitle: order.title,
+        serviceDescription: order.description,
+        amount: Number(order.amount) || 0,
+        platformFee: fee.fee,
+        providerNet: fee.net,
+        currency: platformSettings?.defaultCurrency || "USD",
+        feePercent: platformSettings?.feePercent || FEE_PERCENT,
+        status: order.status === "completed" ? "paid" : order.status === "escrow" ? "issued" : "draft",
+        issuedAt: new Date().toISOString(),
+        notes: "فاتورة رسمية صادرة عن منصة وصل (WASL) لمعاملة ضمان Escrow.",
+      };
+    }
+
+    function renderInvoiceSheet(inv) {
+      currentInvoice = inv;
+      const sheet = document.getElementById("invoiceSheet");
+      if (!sheet) return;
+      if (!inv) {
+        sheet.innerHTML = `<div class="empty">اختر طلبًا وولّد فاتورة</div>`;
+        return;
+      }
+      sheet.innerHTML = `
+        <div id="invoicePrintable" style="border:1px solid rgba(34,211,238,.25);border-radius:18px;padding:1.1rem;background:linear-gradient(180deg,#0b1730,#0a1628);color:#e2e8f0">
+          <div style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;border-bottom:1px solid rgba(148,163,184,.2);padding-bottom:.8rem">
+            <div>
+              <div style="font-size:.65rem;letter-spacing:.2em;color:#67e8f9">WASL · GLOBAL DIGITAL PLATFORM</div>
+              <div style="font-size:1.6rem;font-weight:900;letter-spacing:.14em">WASL</div>
+              <div style="font-size:.85rem;color:#94a3b8">وصل — فاتورة / إيصال رقمي</div>
+            </div>
+            <div style="text-align:left">
+              <span class="badge badge-escrow">${escapeHtml(inv.status)}</span>
+              <div style="font-family:monospace;color:#fdba74;margin-top:.35rem">${escapeHtml(inv.invoiceNumber)}</div>
+              <div style="font-size:.72rem;color:#94a3b8">${escapeHtml(String(inv.issuedAt).slice(0,16).replace("T"," "))}</div>
+            </div>
+          </div>
+          <div class="grid grid-2" style="margin-top:.8rem">
+            <div class="card flat" style="background:rgba(255,255,255,.04)"><div style="font-size:.7rem;color:#67e8f9">العميل</div><strong>${escapeHtml(inv.clientName)}</strong></div>
+            <div class="card flat" style="background:rgba(255,255,255,.04)"><div style="font-size:.7rem;color:#fdba74">مقدم الخدمة</div><strong>${escapeHtml(inv.providerName)}</strong></div>
+          </div>
+          <div class="card flat" style="margin-top:.7rem;background:rgba(255,255,255,.04)">
+            <div style="font-size:.7rem;color:#94a3b8">الخدمة / الطلب</div>
+            <strong>${escapeHtml(inv.orderNumber || "")} · ${escapeHtml(inv.serviceTitle)}</strong>
+            <div style="font-size:.82rem;color:#94a3b8;margin-top:.35rem;line-height:1.7">${escapeHtml(inv.serviceDescription || "—")}</div>
+          </div>
+          <table style="width:100%;margin-top:.8rem;border-collapse:collapse;font-size:.85rem">
+            <tr style="border-bottom:1px solid rgba(148,163,184,.15)"><td style="padding:.55rem 0">قيمة الخدمة</td><td style="text-align:left;font-weight:700">${money(inv.amount)}</td></tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,.15)"><td style="padding:.55rem 0">عمولة المنصة (${inv.feePercent}%)</td><td style="text-align:left;font-weight:700">${money(inv.platformFee)}</td></tr>
+            <tr><td style="padding:.55rem 0">صافي مقدم الخدمة</td><td style="text-align:left;font-weight:700">${money(inv.providerNet)}</td></tr>
+          </table>
+          <div style="margin-top:.9rem;font-size:1.35rem;font-weight:900;background:linear-gradient(90deg,#22d3ee,#fb923c);-webkit-background-clip:text;color:transparent">الإجمالي ${money(inv.amount)}</div>
+          <div style="margin-top:.8rem;padding-top:.7rem;border-top:1px solid rgba(148,163,184,.2);font-size:.75rem;color:#94a3b8;line-height:1.7">${escapeHtml(inv.notes || "")}<br/>معاملة محمية بنظام الضمان (Escrow) في منصة وصل.</div>
+        </div>`;
+    }
+
+    function renderInvoices() {
+      if (!Array.isArray(state.invoices)) state.invoices = [];
+      const billable = state.orders.filter((o) => o.status === "escrow" || o.status === "completed");
+      const sel = document.getElementById("invoiceOrderSelect");
+      if (sel) {
+        sel.innerHTML = billable.length
+          ? billable.map((o) => `<option value="${o.id}">${escapeHtml(o.orderNumber)} — ${escapeHtml(o.title)} (${money(o.amount)})</option>`).join("")
+          : `<option value="">لا طلبات مؤهلة</option>`;
+      }
+      document.getElementById("invoiceStatsChips").innerHTML = `
+        <span class="chip cyan">فواتير ${state.invoices.length}</span>
+        <span class="chip amber">مؤهلة ${billable.length}</span>
+        <span class="chip ok">عملة ${platformSettings?.defaultCurrency || "USD"}</span>`;
+      document.getElementById("invoicesList").innerHTML = state.invoices.length
+        ? state.invoices.map((inv) => `
+          <button type="button" class="order-item" style="width:100%;text-align:right" data-invid="${inv.id}">
+            <div style="font-family:monospace;font-size:.72rem;color:var(--muted)">${escapeHtml(inv.invoiceNumber)}</div>
+            <div style="font-weight:700">${escapeHtml(inv.serviceTitle)}</div>
+            <div style="font-size:.8rem;color:var(--muted)">${escapeHtml(inv.clientName)} → ${escapeHtml(inv.providerName)} · ${money(inv.amount)}</div>
+          </button>`).join("")
+        : `<div class="empty">لا فواتير بعد</div>`;
+      if (currentInvoice) renderInvoiceSheet(currentInvoice);
+      else if (state.invoices[0]) renderInvoiceSheet(state.invoices[0]);
+      else renderInvoiceSheet(null);
+    }
+
+    document.getElementById("invoicesList")?.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-invid]");
+      if (!btn) return;
+      const inv = state.invoices.find((x) => x.id === btn.dataset.invid);
+      if (inv) renderInvoiceSheet(inv);
+    });
+
+    document.getElementById("btnIssueInvoice")?.addEventListener("click", () => {
+      document.getElementById("btnPreviewInvoice")?.click();
+    });
+    document.getElementById("btnPreviewInvoice")?.addEventListener("click", () => {
+      const oid = document.getElementById("invoiceOrderSelect").value;
+      const order = state.orders.find((o) => o.id === oid);
+      if (!order) return toast("اختر طلبًا", "", "err");
+      let inv = state.invoices.find((i) => i.orderId === order.id);
+      if (!inv) {
+        inv = buildInvoiceFromOrder(order);
+        state.invoices.unshift(inv);
+        saveState();
+      }
+      renderInvoices();
+      renderInvoiceSheet(inv);
+      toast("فاتورة رقمية", inv.invoiceNumber);
+    });
+
+    document.getElementById("btnPrintInvoice")?.addEventListener("click", () => {
+      const node = document.getElementById("invoicePrintable");
+      if (!node) return toast("لا فاتورة", "", "err");
+      const w = window.open("", "_blank", "width=900,height=1000");
+      if (!w) return;
+      w.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"/><title>Invoice</title>
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet"/>
+        <style>body{font-family:'IBM Plex Sans Arabic',Tahoma,sans-serif;background:#0a1628;color:#e2e8f0;padding:24px}</style></head>
+        <body>${node.outerHTML}<script>onload=()=>print()</script></body></html>`);
+      w.document.close();
+    });
+
+    document.getElementById("btnDownloadInvoice")?.addEventListener("click", () => {
+      const node = document.getElementById("invoicePrintable");
+      if (!node || !currentInvoice) return;
+      const blob = new Blob([`<!doctype html><html lang="ar" dir="rtl"><body>${node.outerHTML}</body></html>`], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${currentInvoice.invoiceNumber}.html`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    function renderAll() {
+      renderStats();
+      renderOrders();
+      renderProviders();
+      renderWhatsApp();
+      renderSuccessStories();
+      renderDisputes();
+      renderRevenue();
+      renderSettings();
+      renderInvoices();
+      startLive();
+      try { setPortal(currentPortal || "client"); } catch {}
+    }
+    renderAll();
+  </script>
+</body>
+</html>
